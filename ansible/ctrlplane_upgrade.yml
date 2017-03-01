@@ -1,0 +1,96 @@
+---
+- hosts: tenant_keystone_ctl
+  name: "Update keystone (parallel)"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_glance_ctl
+  name: "Update glance (parallel)"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_cinder_ctl
+  name: "Update cinder (parallel)"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_ceilometer_ctl
+  name: "Update ceilometer (parallel)"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_heat_ctl
+  name: "Update heat (parallel)"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_nova_ctl
+  name: "Update nova (parallel)"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_neutron_ctl
+  name: "Update neutron (parallel)"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_neutron_api
+  name: "Update neutron (parallel)"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_network_agents
+  serial: 1
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_compute_rbd
+  serial: 20
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_compute_local
+  serial: 20
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_compute_bigdata
+  serial: 20
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml

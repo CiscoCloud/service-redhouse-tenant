@@ -1,0 +1,7 @@
+---
+neutron::agents::dhcp::dhcp_driver: 'neutron.plugins.cisco.cpnr.dhcp_driver.CpnrDriver'
+neutron::agents::dhcp::cpnr::http_server: '10.23.194.243:8080'
+neutron::agents::dhcp::cpnr::http_user: 'cpnradmin'
+neutron::agents::dhcp::cpnr::http_password: 'cpnradmin'
+neutron::agents::dhcp::cpnr::dhcp_server_addr: '10.23.194.243'
+neutron::agents::dhcp::cpnr::dns_server_addr: '10.23.194.243'

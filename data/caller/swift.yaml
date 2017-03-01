@@ -1,0 +1,10 @@
+---
+# swift::keystone::auth
+swift::keystone::auth::configure_endpoint: false
+swift::keystone::auth::configure_s3_endpoint: false
+swift::keystone::auth::password: "%{hiera('swift_service_password')}"
+swift::keystone::auth::admin_address: "%{hiera('swift_admin_address')}"
+swift::keystone::auth::internal_address: "%{hiera('swift_internal_address')}"
+swift::keystone::auth::public_address: "%{hiera('swift_public_address')}"
+swift::keystone::auth::public_protocol: "%{hiera('controller_public_protocol')}"
+swift::keystone::auth::region: "%{hiera('region')}"

@@ -1,0 +1,7 @@
+---
+classes:
+  - ccs::base
+  - ccs::nova_api
+  - ccs::repose
+  - novawsgi::apache
+

@@ -1,0 +1,18 @@
+---
+# ceph::client::glance
+ceph::client::glance::user: "%{hiera('ceph_glance_user')}"
+ceph::client::glance::secret: "%{hiera('glance_secret')}"
+
+# ceph::client::cinder
+ceph::client::cinder::user: "%{hiera('ceph_cinder_user')}"
+ceph::client::cinder::secret: "%{hiera('cinder_secret')}"
+
+# ceph::conf
+ceph::conf::enable_client: true
+ceph::conf::ceph_monitor_fsid: "%{hiera('ceph_monitor_fsid')}"
+ceph::conf::ceph_mon_initial_members: "%{hiera('ceph_mon_initial_members')}"
+ceph::conf::ceph_monitor_address: "%{hiera('ceph_monitor_address')}"
+ceph::conf::ceph_public_network: "%{hiera('ceph_public_network')}"
+ceph::conf::ceph_cluster_network: "%{hiera('ceph_cluster_network')}"
+ceph::conf::rgw_keystone_url: "%{hiera('controller_internal_url')}"
+ceph::conf::rgw_keystone_admin_token: "%{hiera('keystone::admin_token')}"

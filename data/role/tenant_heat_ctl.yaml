@@ -1,0 +1,5 @@
+---
+classes:
+  - ccs::base
+  - ccs::heat_api
+  - ccs::repose

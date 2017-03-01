@@ -1,0 +1,53 @@
+---
+# galera
+galera::local_ip: "%{hiera('bind_address')}"
+galera::bind_address: "%{hiera('bind_address')}"
+galera::configure_repo: true
+galera::configure_firewall: false
+galera::override_options:
+  'mysqld':
+    'pid-file': '/var/lib/mysql/mysql.pid'
+    'max_connections': 6000
+    'max_connect_errors': 4294967295
+    'open-files-limit': 65535
+    'thread_stack': 524288
+    'thread_cache_size': 32
+    'table_open_cache': 1024
+    'sync-binlog': 1
+    'sort_buffer_size': 2M
+    'query_cache_limit': 32M
+    'query_cache_size': 32M
+    'query_cache_type': 1
+    'read_buffer_size': 2M
+    'join_buffer_size': 262144
+    'max_binlog_size': 200M
+    'max_allowed_packet': 1M
+    'expire_logs_days': 14
+    'skip_name_resolve': 1
+    'innodb-buffer-pool-size': 20G
+    'innodb-log-file-size': 512M
+    'innodb-doublewrite': 1
+    'innodb-file-per-table': 1
+    'innodb-flush-method': O_DIRECT
+    'innodb-log-files-in-group': 2
+    'innodb-flush-log-at-trx-commit': 1
+  'isamchk':
+    'key_buffer_size': '64M'
+galera::root_password: "%{hiera('mysql::server::root_password')}"
+galera::validate_connection: false
+galera::vendor_type: 'percona'
+galera::wsrep_sst_method: xtrabackup-v2
+
+# galera::monitor
+galera::monitor::monitor_username: monitor_user
+
+# galera::repo
+galera::repo::epel_needed: false
+# Previously used 'http://repo.percona.com/centos/6/os/x86_64/'
+galera::repo::yum_percona_baseurl: 'http://sdlc-mirror.cisco.com/percona-centos6/'
+galera::repo::yum_percona_gpgkey: ''
+galera::repo::yum_percona_gpgcheck: '0'
+
+# galera::server
+galera::server::cluster_name: controller_cluster
+galera::server::wsrep_sst_method: rsync

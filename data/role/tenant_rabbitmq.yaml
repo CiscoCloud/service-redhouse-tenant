@@ -1,0 +1,13 @@
+---
+classes:
+  - ccs::base
+  - ccs::rabbitmq
+ccs::base::sysctl::settings:
+  'net.ipv4.tcp_challenge_ack_limit':
+    value: '2147483647'
+  'net.ipv4.tcp_keepalive_time':
+    value: '5'
+  'net.ipv4.tcp_keepalive_probes':
+    value: '5'
+  'net.ipv4.tcp_keepalive_intvl':
+    value: '1'

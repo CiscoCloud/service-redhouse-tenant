@@ -1,0 +1,6 @@
+---
+classes:
+  - ccs::base
+  - ccs::galera
+  - ccs::rabbitmq
+  - ccs::mongodb

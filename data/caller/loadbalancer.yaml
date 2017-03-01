@@ -1,0 +1,30 @@
+---
+loadbalancer::haproxy::haproxy_defaults:
+    # these set the baseline haproxy defaults
+    # They are geared towards webservices
+    # This can override this by
+    # going to data/caller/{your_proxy_role_name}.yaml and overriding this key
+    log: 'global'
+    # http mode required for any of the  the http introspection features
+    option:
+        - 'redispatch' # allow requests to break persistance and migrate if server is down
+        - 'srvtcpka' # tcp keep alive for the server side
+        - 'clitcpka' # tcp keep alive for the client side
+        - 'forwardfor' # set x-forward-for header
+        - 'http-server-close' # allows http keep alive on the client side while closing on server side
+        - 'httplog' # request, method, return status code, X-Trans-Id capture
+    # if connection times out or is refused, try again after 1s (can redispatch)
+    retries: 3
+    timeout:
+        - 'http-keep-alive 10s' # idle connections get closed
+        - 'http-request 10s' # limit how long it takes to upload a single request (does not timeout body uploads)
+        - 'queue 1m' # if maxconn for the proxy is reached, how long to wait for a connection to free up
+        - 'connect 10s' # how long to wait when trying to connect to backend before giving up
+        - 'client 10m' # how long to wait for the client to send some more data, best to match timeout server
+        - 'server 10m' # how long to wait for the server to send some more data (processing time), match timeout client
+        - 'check 10s' # how long to wait for the check to read after connecting
+    maxconn: 8000 # the backend max conns defaults to this value as well
+    # do not use source as default because when haproxy is behind a proxy all traffic goes
+    # to one box, openstack apis themselves are stateless
+    balance: 'roundrobin'
+

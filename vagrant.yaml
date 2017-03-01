@@ -1,0 +1,306 @@
+hosts:
+  keystonectl-001:
+    role: tenant_keystone_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.111
+    mac: "000027000111"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  keystonectl-002:
+    role: tenant_keystone_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.112
+    mac: "000027000112"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  glancectl-001:
+    role: tenant_glance_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.121
+    mac: "000027000121"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  glancectl-002:
+    role: tenant_glance_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.122
+    mac: "000027000122"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  cinderctl-001:
+    role: tenant_cinder_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.131
+    mac: "000027000131"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  cinderctl-002:
+    role: tenant_cinder_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.132
+    mac: "000027000132"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  novactl-001:
+    role: tenant_nova_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.141
+    mac: "000027000141"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  novactl-002:
+    role: tenant_nova_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.142
+    mac: "000027000142"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  neutronapi-001:
+    role: tenant_neutron_api
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.151
+    mac: "000027000151"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  neutronapi-002:
+    role: tenant_neutron_api
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.152
+    mac: "000027000152"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  horizon-001:
+    role: tenant_horizon
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.161
+    mac: "000027000161"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  horizon-002:
+    role: tenant_horizon
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.162
+    mac: "000027000162"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  ceilometerctl-001:
+    role: tenant_ceilometer_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.171
+    mac: "000027000171"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  ceilometerctl-002:
+    role: tenant_ceilometer_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.172
+    mac: "000027000172"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  heatctl-001:
+    role: tenant_heat_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.181
+    mac: "000027000181"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  heatctl-002:
+    role: tenant_heat_ctl
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.182
+    mac: "000027000182"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  net-001:
+    role: tenant_network_agents
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.15
+    mac: "000027000015"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  net-002:
+    role: tenant_network_agents
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.16
+    mac: "000027000016"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  proxyinternal-001:
+    role: tenant_proxy_internal
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.9
+    mac: "000027000009"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  proxyinternal-002:
+    role: tenant_proxy_internal
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.10
+    mac: "000027000010"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  proxyexternal-001:
+    role: tenant_proxy_external
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.60
+    mac: "000027000060"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  proxyexternal-002:
+    role: tenant_proxy_external
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.61
+    mac: "000027000061"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  nova-001:
+    role: tenant_compute_local
+    domain: 1
+    profile: aio,tenant
+    ip: 192.168.100.50
+    mac: "000027000050"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  nova-002:
+    role: tenant_compute_local
+    domain: 1
+    profile: aio,tenant
+    ip: 192.168.100.51
+    mac: "000027000051"
+    memory: 1024
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  db-001:
+    role: tenant_db
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.12
+    mac: "000027000012"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  db-002:
+    role: tenant_db
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.13
+    mac: "000027000013"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  db-003:
+    role: tenant_db
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.14
+    mac: "000027000014"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  ceph-mon-001:
+    role: ceph_mon
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.200
+    mac: "000027000200"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  ceph-mon-002:
+    role: ceph_mon
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.201
+    mac: "000027000201"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  ceph-mon-003:
+    role: ceph_mon
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.202
+    mac: "000027000202"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+  ceph-osd-001:
+    role: ceph_osd
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.205
+    mac: "000027000205"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+    storage_disks:
+      - b
+      - c
+      - d
+      - e
+      - f
+      - g
+      - h
+      - i
+      - j
+      - k
+  ceph-osd-002:
+    role: ceph_osd
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.206
+    mac: "000027000206"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+    storage_disks:
+      - b
+      - c
+      - d
+      - e
+      - f
+      - g
+      - h
+      - i
+      - j
+      - k
+  ceph-osd-003:
+    role: ceph_osd
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.207
+    mac: "000027000207"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"
+    storage_disks:
+      - b
+      - c
+      - d
+      - e
+      - f
+      - g
+      - h
+      - i
+      - j
+      - k
+  ceph-rgw-001:
+    role: ceph_rgw
+    domain: 1
+    profile: tenant
+    ip: 192.168.100.210
+    mac: "000027000210"
+    memory: 512
+    box: "http://cis-kickstart.cisco.com/ccs-rhel-7.box"

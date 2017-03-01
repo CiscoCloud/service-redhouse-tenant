@@ -1,0 +1,137 @@
+---
+# nova
+nova::database_connection: "mysql://nova:%{hiera('nova::db::mysql::password')}@%{hiera('mysql_vip')}/nova"
+nova::mysql_module: 2.3
+nova::rpc_backend: 'nova.openstack.common.rpc.impl_kombu'
+nova::monitoring_notifications: true
+nova::notification_topics: 'notifications,cc_nova'
+nova::notify_on_state_change: 'vm_and_task_state'
+nova::instance_usage_audit: true
+nova::instance_usage_audit_period: 'hour'
+nova::max_local_block_devices: -1
+nova::database_idle_timeout: 30
+nova::debug: false
+nova::ensure_package: present
+nova::glance_api_servers: "%{hiera('controller_internal_address')}:9292"
+nova::log_facility: LOG_USER
+nova::rabbit_password: "%{hiera('rpc_password')}"
+nova::rabbit_userid: "%{hiera('rpc_user')}"
+nova::use_syslog: false
+nova::verbose: true
+
+# nova::config
+# Moved to support hiera_hash, see caller/ccs.yaml
+
+# nova::api
+nova::api::enabled_apis: ''
+nova::api::admin_password: "%{hiera('nova_service_password')}"
+nova::api::neutron_metadata_proxy_shared_secret: "%{hiera('neutron::agents::metadata::shared_secret')}"
+nova::api::admin_password: "%{hiera('nova_service_password')}"
+nova::api::api_bind_address: "%{hiera('bind_address')}"
+nova::api::auth_host: "%{hiera('controller_internal_address')}"
+nova::api::enabled: false
+nova::api::ensure_package: present
+nova::api::metadata_listen: "%{hiera('bind_address')}"
+
+# nova::conductor
+nova::conductor::enabled: true
+nova::conductor::enabled: true
+nova::conductor::ensure_package: present
+
+# nova::db::mysql
+nova::db::mysql::mysql_module: 2.3
+nova::db::mysql::charset: "%{hiera('mysql_default_charset')}"
+nova::db::mysql::collate: "%{hiera('mysql_default_collation')}"
+nova::db::mysql::allowed_hosts: "%{hiera('allowed_hosts')}"
+nova::db::mysql::host: "%{hiera('localhost')}"
+
+# nova::rabbitmq
+nova::rabbitmq::cluster_disk_nodes: false
+nova::rabbitmq::password: "%{hiera('rpc_password')}"
+nova::rabbitmq::userid: "%{hiera('rpc_user')}"
+
+# nova::scheduler
+nova::scheduler::enabled: true
+nova::scheduler::ensure_package: present
+nova::scheduler::filter::scheduler_host_subset_size: 5
+
+# nova::scheduler::filter
+#- 'AggregateCoreFilter' substituted with AggregateCoreFastFilter only valid in RH OSP5 Hotfix
+#- 'AggregateRamFilter' substituted with AggregateRamFastFilter only valid in RH OSP5 Hotfix
+nova::scheduler::filter::scheduler_default_filters:
+  - 'ComputeFilter'
+  - 'AggregateInstanceExtraSpecsFilter'
+  - 'RamFilter'
+  - 'CoreFilter'
+  - 'ServerGroupAntiAffinityFilter'
+  - 'ServerGroupAffinityFilter'
+  - 'AggregateCoreFastFilter'
+  - 'AggregateRamFastFilter'
+  - 'JsonFilter'
+
+# nova::compute
+nova::compute::resume_guests_state_on_host_boot: true
+nova::compute::enabled: true
+nova::compute::ensure_package: present
+nova::compute::vncserver_proxyclient_address: "%{hiera('bind_address')}"
+nova::compute::instance_usage_audit: true
+nova::compute::instance_usage_audit_period: 'hour'
+
+
+# nova::compute::libvirt
+nova::compute::libvirt::libvirt_virt_type: kvm
+nova::compute::libvirt::libvirt_cpu_mode: false
+nova::compute::libvirt::migration_support: true
+nova::compute::libvirt::vncserver_listen: 0.0.0.0
+nova::compute::libvirt::libvirt_disk_cachemodes:
+  - 'network=writeback'
+
+# nova::compute::neutron
+nova::compute::neutron::libvirt_vif_driver: nova.virt.libvirt.vif.LibvirtGenericVIFDriver
+
+# nova::compute::rbd
+nova::compute::rbd::libvirt_rbd_user: "%{hiera('ceph_cinder_user')}"
+## must be set to false to override it trying to use the admin keyring in exec
+nova::compute::rbd::libvirt_rbd_secret_uuid: false
+nova::compute::rbd::libvirt_images_rbd_pool: "%{hiera('cinder_rbd_pool')}"
+nova::compute::rbd::libvirt_images_rbd_ceph_conf: '/etc/ceph/ceph.conf'
+nova::compute::rbd::rbd_keyring: "client.%{hiera('ceph_cinder_user')}"
+
+# nova::keystone::auth
+nova::keystone::auth::password: "%{hiera('nova_service_password')}"
+nova::keystone::auth::admin_address: "%{hiera('controller_admin_address')}"
+nova::keystone::auth::internal_address: "%{hiera('controller_internal_address')}"
+nova::keystone::auth::password: "%{hiera('nova_service_password')}"
+nova::keystone::auth::public_address: "%{hiera('controller_public_address')}"
+nova::keystone::auth::public_protocol: "%{hiera('controller_public_protocol')}"
+nova::keystone::auth::region: "%{hiera('region')}"
+nova::keystone::auth_name: "%{hiera('nova_admin_username')}"
+
+# nova::vncproxy
+nova::vncproxy::enabled: true
+nova::vncproxy::ensure_package: present
+nova::vncproxy::host: "%{hiera('bind_address')}"
+
+# nova::cert
+nova::cert::enabled: true
+nova::cert::ensure_package: present
+
+# nova::client
+nova::client::ensure: present
+
+# nova::consoleauth
+nova::consoleauth::enabled: true
+nova::consoleauth::ensure_package: present
+
+# nova::network
+nova::network::ensure_package: present
+nova::network::neutron::neutron_admin_auth_url: "http://%{hiera('controller_internal_address')}:35357/v2.0"
+nova::network::neutron::neutron_admin_password: "%{hiera('network_service_password')}"
+nova::network::neutron::neutron_region_name: "%{hiera('region')}"
+nova::network::neutron::neutron_url: "http://%{hiera('controller_internal_address')}:9696"
+nova::network::neutronclient::neutron_region_name: "%{hiera('region')}"
+
+# nova::objectstore
+nova::objectstore::enabled: true
+nova::objectstore::ensure_package: present
+

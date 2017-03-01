@@ -1,0 +1,61 @@
+---
+- include: disable_neutron_ha_monitor.yml
+
+- hosts: "~(.*)rabbitmq-003"
+  name: "Updating rabbitmq-003"
+  pre_tasks:
+    - include: requests_workaround.yml
+    - shell: date +%F_%T
+      register: backup_time
+      changed_when: False
+    - shell: >
+        cp -rp /var/lib/rabbitmq/mnesia /root/mnesia_backup.{{ backup_time.stdout }} \
+        && chmod 0700 /root/mnesia_backup.{{ backup_time.stdout }}
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - shell: systemctl start rabbitmq-server
+    - wait_for: host=0.0.0.0 port=5672 timeout=30
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: "~(.*)rabbitmq-002"
+  name: "Updating rabbitmq-002"
+  pre_tasks:
+    - include: requests_workaround.yml
+    - shell: date +%F_%T
+      register: backup_time
+      changed_when: False
+    - shell: >
+        cp -rp /var/lib/rabbitmq/mnesia /root/mnesia_backup.{{ backup_time.stdout }} \
+        && chmod 0700 /root/mnesia_backup.{{ backup_time.stdout }}
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - shell: systemctl start rabbitmq-server
+    - wait_for: host=0.0.0.0 port=5672 timeout=30
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: "~(.*)rabbitmq-001"
+  name: "Updating rabbitmq-001"
+  pre_tasks:
+    - include: requests_workaround.yml
+    - shell: date +%F_%T
+      register: backup_time
+      changed_when: False
+    - shell: >
+        cp -rp /var/lib/rabbitmq/mnesia /root/mnesia_backup.{{ backup_time.stdout }} \
+        && chmod 0700 /root/mnesia_backup.{{ backup_time.stdout }}
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - shell: systemctl start rabbitmq-server
+    - wait_for: host=0.0.0.0 port=5672 timeout=30
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- include: enable_neutron_ha_monitor.yml

@@ -1,0 +1,37 @@
+- hosts: localhost
+  sudo: yes
+  vars_files:
+    - /opt/ccs/services/redhouse-tenant/dev/data.yaml
+  tasks:
+    - name: set ntp server
+      copy: content="server ntp.esl.cisco.com iburst\n" dest=/etc/ntp.conf
+
+    - name: configure sysctl.conf defaults
+      lineinfile: line="{{ item }}=0" dest=/etc/sysctl.conf
+      with_items:
+        - 'net.ipv6.conf.default.autoconf'
+        - 'net.ipv6.conf.default.accept_ra'
+        - 'net.ipv6.conf.all.autoconf'
+        - 'net.ipv6.conf.all.accept_ra'
+
+    - name: set sdlc repos
+      template: src=templates/sdlc-mirror.repo.j2 dest=/etc/yum.repos.d/sdlc-mirror.repo
+      register: set_repos
+
+    - name: set artifactory repos
+      template: src=templates/yum_repo.j2 dest=/etc/yum.repos.d/ccs-artifactory.repo
+      register: set_arti_repos
+
+    - name: yum clean
+      shell: yum clean all
+
+    - name: yum sync
+      shell: yum makecache fast
+      when: set_repos.changed or set_arti_repos.changed
+
+    - name: yum update
+      shell: yum update -y --exclude=ansible*
+      when: set_repos.changed or set_arti_repos.changed
+
+    - name: set hostname
+      shell: echo "{{ hostname }}" > /proc/sys/kernel/hostname

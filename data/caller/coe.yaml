@@ -1,0 +1,8 @@
+---
+# coe::network::interface
+coe::network::interface::method: manual
+
+# coe::base
+coe::base::controller_node_internal: "%{hiera('controller_internal_address')}"
+coe::base::domain_name: "%{hiera('domain_name')}"
+coe::base::build_node_name: "%{hiera('build_node_name')}"

@@ -1,0 +1,36 @@
+---
+# mysql::server
+mysql::server::override_options:
+  mysqld:
+    pid-file: '/var/lib/mysql/mysql.pid'
+    bind-address: "%{bind_address}"
+    max-connections: 8192
+    max_connect_errors: 4294967295
+    open-files-limit: 65535
+    thread_stack: 524288
+    table_open_cache: 512
+    sync-binlog: 1
+    sort_buffer_size: 2M
+    query_cache_limit: 32M
+    query_cache_size: 32M
+    read_buffer_size: 2M
+    max_binlog_size: 200M
+    max_allowed_packet: 1M
+    expire_logs_days: 14
+    skip_name_resolve: 1
+    innodb-buffer-pool-size: 24G
+    innodb-log-file-size: 512M
+    innodb-doublewrite: 1
+    innodb-file-per-table: 1
+    innodb-flush-method: O_DIRECT
+    innodb-log-files-in-group: 2
+    innodb-flush-log-at-trx-commit: 1
+  isamchk:
+    key_buffer_size: 64M
+mysql::server::restart: false
+mysql::server::service_manage: true
+mysql::server::service_provider: 'redhat'
+
+# mysql::config
+mysql::config::root_password: "%{hiera('mysql::server::root_password')}"
+mysql::config::bind_address: "%{hiera('bind_address')}"

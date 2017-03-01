@@ -1,0 +1,19 @@
+---
+classes:
+  - ccs::base
+  - ccs::proxy_internal
+ccs::base::sysctl::settings:
+  'net.ipv4.tcp_challenge_ack_limit':
+    value: '2147483647'
+  'net.ipv4.tcp_keepalive_intvl':
+    value: '75'
+  'net.ipv4.tcp_keepalive_time':
+    value: '7200'
+  'net.ipv4.tcp_keepalive_probes':
+    value: '9'
+  'net.ipv4.tcp_retries2':
+    value: '15'
+  'net.ipv4.ip_local_port_range':
+    value: '1025 65534'
+  'net.netfilter.nf_conntrack_max':
+    value: '524288'

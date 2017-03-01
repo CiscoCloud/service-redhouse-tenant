@@ -1,0 +1,11 @@
+---
+- hosts: "tenant_compute_*"
+  name: "Update novaX hypervisors with migrated VMs"
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml

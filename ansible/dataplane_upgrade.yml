@@ -1,0 +1,69 @@
+---
+- hosts: tenant_proxy
+  name: "Update proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_proxy_internal
+  name: "Update internal proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_proxy_external
+  name: "Update external proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: "*-percona-001"
+  name: "Update percona-001"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: "*-percona-002"
+  name: "Update percona-002"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: "*-percona-003"
+  name: "Update percona-003"
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_rabbitmq
+  name: "Update external proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_mongodb
+  name: "Update mongodb servers (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+  tasks:
+    - include: ./roles/puppet/tasks/check_state.yml

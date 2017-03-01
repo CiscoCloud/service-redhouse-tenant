@@ -1,0 +1,61 @@
+---
+
+- name: Reboot {{ inventory_hostname }}
+  shell: /usr/sbin/reboot
+  async: 0
+  poll: 0
+  ignore_errors: true
+  failed_when: false
+  tags: reboot
+
+- name: Wait for SSH on {{ inventory_hostname }}
+  local_action: wait_for host={{ inventory_hostname }} port=22 search_regex=OpenSSH delay=200
+  tags: reboot
+
+- name: Fix mysql start issue
+  shell: mkdir /var/run/mariadb; chown mysql:mysql /var/run/mariadb
+  when: "'aio' in group_names"
+  tags: reboot
+
+- name: Start mysql
+  service: name=mysql state=started
+  when: "'aio' in group_names"
+  tags: reboot
+
+- name: Check for Rabbit Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=5672 delay=30
+  when: "'tenant_rabbitmq' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Mysql Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=3306 delay=30
+  when: "'tenant_percona' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Nova API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=8774 delay=30
+  when: "'tenant_nova_ctl' in group_names or 'aio' in group_names"
+
+- name: Check for Neutron API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=9696 delay=30
+  when: "'tenant_neutron_api' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Keystone API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=35357 delay=30
+  when: "'tenant_keystone_ctl' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Glance API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=9292 delay=30
+  when: "'tenant_glance_ctl' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Cinder API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=8776 delay=30
+  when: "'tenant_cinder_ctl' in group_names or 'aio' in group_names"
+  tags: reboot
+
+# TODO: need to find a way to check if net nodes came up properly
+# TODO: Check if nova compute nodes came back
+#

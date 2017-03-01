@@ -1,0 +1,247 @@
+---
+# cobbler
+cobbler::expert_disk: true
+cobbler::ntp_server: '1.ntp.esl.cisco.com'
+cobbler::dhcp_service: 'dnsmasq'
+cobbler::dns_service: 'dnsmasq'
+cobbler::ucsm_port: 443
+cobbler::distros:
+  rhel-server-7.0-x86_64:
+    ensure: present
+    arch: x86_64
+    os_version: rhel7
+    kernel: /var/www/cobbler/ks_mirror/rhel-server-7.0-x86_64/images/pxeboot/vmlinuz
+    initrd: /var/www/cobbler/ks_mirror/rhel-server-7.0-x86_64/images/pxeboot/initrd.img
+    isolink: http://cis-kickstart.cisco.com/rhel-server-7.0-x86_64-dvd.iso
+    destdir: /var/www/cobbler/ks_mirror
+    ks_meta:
+      tree: "http://@@http_server@@/cblr/links/rhel-server-7.0-x86_64"
+cobbler::profiles:
+  rhel-server-7.0-x86_64:
+    ensure: present
+    distro: rhel-server-7.0-x86_64
+cobbler::repos:
+  "%{hiera('site_repo')}":
+    ensure: present
+    arch: x86_64
+    mirror: "http://sdlc-oob-rpm.cisco.com/rpm/secure/%{hiera('site_repo')}/"
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  ccs-secure-repo:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-oob-rpm.cisco.com/rpm/secure/pool
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  ice-1.2.2-ceph:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/ice-1.2.2-ceph
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  ice-1.2.2-ceph-deploy:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/ice-1.2.2-ceph-deploy
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  mongodb:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/mongodb
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  osp5-hotfix:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/osp5-hotfix
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  percona-centos6:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/percona-centos6
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  percona-rhel7:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/percona-rhel7
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-ansible-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-ansible-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-ansible-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-ansible-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-cisco-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-cisco-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-cisco-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-cisco-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-extras-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-extras-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-extras-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-extras-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-kombu-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-kombu-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-kombu-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-kombu-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-openstack-5.0-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-openstack-5.0-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-openstack-5.0-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-openstack-5.0-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-optional-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-optional-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-optional-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-optional-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-rabbitmq-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-rabbitmq-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-rabbitmq-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-rabbitmq-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-rhn-tools-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-rhn-tools-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-rhn-tools-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-rhn-tools-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-supplementary-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-supplementary-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-supplementary-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-supplementary-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-ha-for-rhel-7-server-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-ha-for-rhel-7-server-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-ha-for-rhel-7-server-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-ha-for-rhel-7-server-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-hybrid-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-hybrid-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99
+  rhel-7-server-hybrid-source-rpms:
+    ensure: present
+    arch: x86_64
+    mirror: http://sdlc-mirror.cisco.com/rhel-7-server-hybrid-source-rpms
+    mirror_locally: true
+    keep_updated: false
+    priority: 99

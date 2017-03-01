@@ -1,0 +1,77 @@
+---
+- hosts: "~(.*)cinder(.*):~(.*)nova(.*):~(.*)glance(.*):~(.*)keystone(.*):~(.*)net(.*):~(.*)neutron(.*):~(.*)aio(.*):~(.*)ceilometer(.*):~(.*)heat(.*)"
+  tasks:
+    - name: Install Oslo dependencies
+      yum: name=python-oslo-serialization,python-oslo-utils,python-six state=latest disable_gpg_check=yes
+
+- hosts: tenant_proxy_internal
+  name: "Update internal proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+
+- hosts: tenant_proxy_external
+  name: "Update external proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+
+- hosts: "*percona-001"
+  name: "Update external proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+
+- hosts: "*percona-002"
+  name: "Update external proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+
+- hosts: "*percona-003"
+  name: "Update external proxies (serial)"
+  serial: 1
+  roles:
+    - yum
+    - puppet
+
+- hosts: tenant_rabbitmq:tenant_mongodb:tenant_keystone_ctl:tenant_glance_ctl:tenant_cinder_ctl:tenant_ceilometer_ctl:tenant_heat_ctl:tenant_nova_ctl:tenant_neutron_api
+  name: "Group core services by availability group"
+  serial: 1
+  tasks:
+    - group_by: "key=core_by_rack_{{ deploy_args.availability_zone }}"
+
+- hosts: "core_by_rack_*"
+  serial: 1
+  name: "Update core services by avaialability group (serial)"
+  roles:
+    - yum
+    - puppet
+
+- hosts: tenant_network_agents
+  serial: 1
+  roles:
+    - yum
+    - puppet
+
+- hosts: tenant_compute_rbd
+  serial: 20
+  roles:
+    - yum
+    - puppet
+
+- hosts: tenant_compute_local
+  serial: 20
+  roles:
+    - yum
+    - puppet
+
+- hosts: tenant_compute_bigdata
+  serial: 20
+  roles:
+    - yum
+    - puppet

@@ -1,0 +1,118 @@
+---
+#vars:
+#  data_version: "{{ data_version | default(*) }}"
+#  redhouse_version: "{{ redhouse_version | default(*) }}"
+
+- hosts: tenant_proxy
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_percona
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/wait.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_rabbitmq
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/wait.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+
+- hosts: tenant_mongodb
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/wait.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_keystone_ctl
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_neutron_api
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_nova_ctl
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_heat_ctl
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_ceilometer_ctl
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_network_agents
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_glance_ctl
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_cinder_ctl
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_compute_bigdata
+  serial: 20
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_compute_local
+  serial: 20
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: tenant_compute_rbd
+  serial: 20
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+- hosts: aio
+  serial: 1
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+

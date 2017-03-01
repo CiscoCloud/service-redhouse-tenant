@@ -1,0 +1,70 @@
+---
+- name: Update /etc/yum.repos.d/build_mirror.repo
+  template: src=build_mirror.repo.j2 dest=/etc/yum.repos.d/build_mirror.repo
+  register: set_repos
+  tags:
+    - yum_update
+    - define_repos
+
+- name: yum sync
+  shell: yum clean all; yum makecache
+  tags:
+    - yum_update
+    - define_repos
+
+- name: Install Oslo dependencies
+  yum: name=python-oslo-serialization,python-oslo-utils,python-six state=latest disable_gpg_check=yes
+  when: "'tenant_cinder_ctl' in group_names or 'tenant_compute_bigdata' in group_names or 'tenant_compute_local' in group_names or 'tenant_compute_rbd' in group_names or 'tenant_glance_ctl' in group_names or 'tenant_keystone_ctl' in group_names or 'tenant_network_agents' in group_names or 'tenant_neutron_api' in group_names or 'tenant_nova_ctl' in group_names or 'aio' in group_names or 'compute_local' in group_names or 'tenant_ceilometer_ctl' in group_names or 'tenant_heat_ctl' in group_names"
+  tags:
+    - yum_update
+
+- name: Install python-neutronclient (neutron_api, network_agents, nova_ctl and horizon)
+  yum: name=python-neutronclient state=latest disable_gpg_check=yes
+  when: "'tenant_neutron_api' in group_names or 'tenant_network_agents' in group_names or 'tenant_nova_ctl' in group_names"
+
+- name: Yum upgrade base packages
+  yum: name=* state=latest disablerepo=* enablerepo=rhel-7-server-rpms-7.2,service-rhel-7-server-rpms* disable_gpg_check=yes
+  register: yum_upgrade
+  tags:
+    - yum_update
+
+- name: Yum upgrade for control plane
+  yum: name=* state=latest disablerepo=* enablerepo=*openstack-5.0-rpms*,rhel-7-server-rpms-7.2,service-rhel-7-server-rpms* disable_gpg_check=yes
+#  shell: yum --disablerepo=*openstack-6.0-rpms*,{{ yum_update_exclude_repos | join(",")}} --nogpg -y update
+  register: yum_upgrade
+  when: "'tenant_cinder_ctl' in group_names or 'tenant_compute_bigdata' in group_names or 'tenant_compute_local' in group_names or 'tenant_compute_rbd' in group_names or 'tenant_keystone_ctl' in group_names or 'tenant_network_agents' in group_names or 'tenant_neutron_api' in group_names or 'tenant_nova_ctl' in group_names or 'tenant_proxy' in group_names or 'aio' in group_names or 'compute_local' in group_names"
+  tags:
+    - yum_update
+
+- name: Yum upgrade for glance, ceilometer and heat controllers
+  yum: name=* state=latest disablerepo=* enablerepo=*openstack-6.0-rpms*,service-rhel-7-server-rpms* disable_gpg_check=yes
+  register: yum_upgrade
+  when: "'tenant_glance_ctl' in group_names or 'tenant_ceilometer_ctl' in group_names or 'tenant_heat_ctl' in group_names"
+  tags:
+    - yum_update
+
+- name: Yum upgrade data plane (Percona, Rabbit, MongoDB)
+  yum: name=* state=latest disablerepo=*openstack-6.0-rpms*,{{ yum_update_exclude_repos | join(",")}} disable_gpg_check=yes
+  register: yum_upgrade
+  when: "'tenant_percona' in group_names or 'tenant_rabbitmq' in group_names or 'tenant_mongodb' in group_names"
+  tags:
+    - yum_update
+
+- name: check for repose
+  shell: "ps -ef |fgrep repose/repose-valve.jar | fgrep -v grep | wc -l"
+  register: svc_repose
+  changed_when: false
+
+- name: restart repose if running
+  service: name=repose-valve
+           state=restarted
+  when: svc_repose.stdout|int > 0
+
+- name: Yum upgrade for horizon controllers
+  yum: name=* state=latest disablerepo=* enablerepo=*service-rhel-7-server-rpms* disable_gpg_check=yes
+  register: yum_upgrade
+  when: "'tenant_horizon' in group_names"
+  tags:
+    - yum_update
+
+- include: update_monitoring.yml

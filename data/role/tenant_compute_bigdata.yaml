@@ -1,0 +1,6 @@
+---
+classes:
+  - ccs::base
+  - ccs::compute
+
+ccs::base::selinux::mode: "Enforcing"

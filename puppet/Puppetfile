@@ -1,0 +1,43 @@
+#
+# Continuous Integration Projects (Protected Master)
+#
+require 'yaml'
+
+USER = ENV['USER'].nil? ? 'jenkins' : ENV['USER']
+
+data = YAML::load(File.open(File.join('./', 'modules.yaml')))
+
+data['modules'].each do |repo|
+  repo.each do |name,ver|
+    module_name = name.gsub('ccs-', '').gsub('puppet-', '').gsub('puppetlabs-', '').gsub('-', '_')
+    mod module_name,
+      :git => "ssh://#{USER}@ccs-gerrit.cisco.com:29418/#{name}",
+      :ref => ver
+  end
+end
+
+#
+# These modules are special cases because the class names
+# don't conform to the puppet style guide, and thus have to be included
+# in a specific way.
+#
+data['modules_special'].each do |repo|
+  repo.each do |name,ver|
+    module_name = name.gsub('ccs-', '').gsub('puppet-', '').gsub('puppetlabs-', '')
+    mod module_name,
+      :git => "ssh://#{USER}@cis-gerrit.cisco.com:29418/#{name}",
+      :ref => ver
+  end
+end
+
+#
+# Upstream stackforge modules, hosted on github
+#
+data['modules_stackforge'].each do |repo|
+  repo.each do |name,ver|
+    module_name = name.gsub('ccs-', '').gsub('puppet-', '').gsub('puppetlabs-', '')
+    mod module_name,
+      :git => "https://github.com/stackforge/#{name}.git",
+      :ref => ver
+  end
+end

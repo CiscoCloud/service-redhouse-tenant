@@ -1,0 +1,8 @@
+---
+classes:
+  - ccs::base
+  - ccs::build
+  - ccs::cobbler
+  - ccs::osclients
+
+apache::default_vhost: true

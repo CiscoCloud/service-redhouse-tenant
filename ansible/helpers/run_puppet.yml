@@ -1,0 +1,150 @@
+# TODO: Get rid of duplicates and set fact based on Tenant Cloud vs. Service Cloud
+
+- set_fact: log_file=puppet_run_{{ ansible_date_time.date }}_{{ ansible_date_time.epoch }}
+- set_fact: log_dir=/var/log/puppet_run/{{ ansible_hostname }}
+
+- set_fact: redhouse_tenant_dev_path="{{playbook_dir}}/../"
+  when: redhouse_tenant_dev is defined and redhouse_tenant_dev|bool == True
+
+- set_fact: ccs_data_dev_path="{{playbook_dir}}/../../data"
+  when: redhouse_tenant_dev is defined and redhouse_tenant_dev|bool == True
+
+- set_fact: log_dir="{{playbook_dir}}/../../puppet_run"
+  when: redhouse_tenant_dev is defined and redhouse_tenant_dev|bool == True
+
+- set_fact: branch={{ branch | default('release') }}
+
+- debug: var=branch
+
+- name: Get latest redhouse tenant version
+  shell: yum list --showduplicates service-redhouse-tenant | grep {{ branch }} | awk '{print $2}'|grep '[0-9]'|awk -F':' '{print $2}' | tail -1
+  register: redhouse_version_latest
+  when: redhouse_version is not defined and ('aio' not in group_names or 'compute_local' not in group_names)
+
+- set_fact: redhouse_version={{ redhouse_version_latest.stdout }}
+  when: redhouse_version is not defined and ('aio' not in group_names or 'compute_local' not in group_names)
+
+- name: Get latest redhouse service version
+  shell: yum list --showduplicates service-redhouse-svc | grep {{ branch }} | awk '{print $2}'|grep '[0-9]'|awk -F':' '{print $2}' | tail -1
+  register: redhouse_svc_version_latest
+  when: redhouse_svc_version is not defined and ('aio' in group_names or 'compute_local' in group_names)
+
+- set_fact: redhouse_svc_version={{ redhouse_svc_version_latest.stdout }}
+  when: redhouse_svc_version is not defined and ('aio' in group_names or 'compute_local' in group_names)
+
+- name: Get latest data  version
+  shell: yum list --showduplicates ccs-data-{{ data_package }} |awk '{print $2}'|grep '[0-9]'|awk -F':' '{print $2}'| tail -1
+  register: data_version_latest
+  when: data_version is not defined
+
+- set_fact: data_version={{ data_version_latest.stdout }}
+  when: data_version is not defined
+
+- name: update yum cache
+  shell: yum makecache fast
+  tags: install_package
+
+- debug: var=redhouse_version
+  when: redhouse_svc_version is not defined
+
+- name: install redhouse-tenant-{{ redhouse_version }}
+  yum: name=service-redhouse-tenant-{{ redhouse_version }} state=present
+  tags: install_package
+  when: "'aio' not in group_names and 'compute_local' not in group_names"
+
+- name: synching redhouse-tenant code from build-server for easy puppet development
+  synchronize: src={{redhouse_tenant_dev_path}}  dest=/opt/ccs/services/redhouse-tenant/
+  when: redhouse_tenant_dev is defined and redhouse_tenant_dev|bool == True
+
+- debug: var=redhouse_svc_version
+  when: redhouse_svc_version is defined
+
+- name: install redhouse-svc-{{ redhouse_svc_version }}
+  yum: name=service-redhouse-svc-{{ redhouse_svc_version }} state=present
+  tags: install_package
+  when: "'aio' in group_names or 'compute_local' in group_names"
+
+- debug: var=data_version
+
+- name: install ccs-data-{{ data_package }}-{{ data_version }}
+  yum: name=ccs-data-{{ data_package }}-{{ data_version }} state=present
+  tags: install_package
+
+- name: syncing ccs-data code from build-server for easy ccs-data development
+  synchronize: src="{{ccs_data_dev_path}}/environments/{{region}}/site.yaml" dest=/etc/puppet/data/hiera_data/site.yaml
+  when: redhouse_tenant_dev is defined and redhouse_tenant_dev|bool == True
+
+- name: Link global data files
+  file: src=/etc/puppet/data/hiera_data/site.yaml dest=/opt/ccs/services/redhouse-tenant/data/site.yaml state=link
+  tags: install_package
+  when: "'aio' not in group_names and 'compute_local' not in group_names"
+
+- name: Link global data files
+  file: src=/etc/puppet/data/hiera_data/site.yaml dest=/opt/ccs/services/redhouse-svc/data/site.yaml state=link
+  tags: install_package
+  when: "'aio' in group_names or 'compute_local' in group_names"
+
+- name: set role fact
+  copy: content="role={{ role }}" dest=/etc/facter/facts.d/role.txt force=yes
+  tags: install_package
+
+- name: Load host yaml file
+  shell:  "cat /etc/ccs/data/environments/{{data_package}}/hosts.yaml"
+  register: hieravars
+  delegate_to: 127.0.0.1
+  changed_when: False
+  tags: install_package
+
+- name: Generate host hiera data
+  copy:
+    content: "{{(hieravars.stdout|from_yaml)[inventory_hostname]|to_nice_yaml}}"
+    dest: "/opt/ccs/services/{{ service }}/data/hostname/{{ansible_fqdn}}.yaml"
+    force: yes
+  tags: install_package
+
+- name: puppet apply tenant cloud
+  shell: "puppet apply -v --show_diff --color=false --confdir . --logdest /var/log/puppet/{{ log_file }} manifests/site.pp 2>&1"
+  changed_when: False
+  failed_when: puppet_output_tenant == 1
+  register: puppet_output_tenant
+  when: "'aio' not in group_names and 'compute_local' not in group_names"
+  args:
+    chdir: /opt/ccs/services/redhouse-tenant/puppet
+
+- name: puppet apply service cloud
+  shell: "puppet apply -v --show_diff --color=false --confdir . --logdest /var/log/puppet/{{ log_file }} manifests/site.pp 2>&1"
+  changed_when: False
+  failed_when: puppet_output_svc == 1
+  register: puppet_output_svc
+  when: "'aio' in group_names or 'compute_local' in group_names"
+  args:
+    chdir: /opt/ccs/services/redhouse-svc/puppet
+
+- debug: var=puppet_output_tenant.stdout_lines
+
+- debug: var=puppet_output_svc.stdout_lines
+
+- name: uninstall latest packages
+  yum: name="{{ item }}" state=absent
+  with_items:
+    - service-redhouse-*
+    - ccs-data-{{ data_package }}
+  tags: remove_package
+
+- name: Create puppet_run directory /var/log/puppet_run/{{ ansible_hostname }}
+  local_action: file path={{ log_dir }} state=directory mode=0755
+
+- name: grab tenant cloud puppet run
+  fetch: src="/var/log/puppet/{{ log_file }}" dest={{ log_dir }}/ flat=yes
+  when: "'aio' not in group_names and 'compute_local' not in group_names"
+  args:
+    chdir: /opt/ccs/services/redhouse-tenant/puppet
+
+- name: grab service cloud puppet run
+  fetch: src="/var/log/puppet/{{ log_file }}" dest={{ log_dir }}/ flat=yes
+  when: "'aio' in group_names or 'compute_local' in group_names"
+  args:
+    chdir: /opt/ccs/services/redhouse-svc/puppet
+
+- name: delete the run file on the server
+  file: path=/var/log/puppet/{{ log_file }} state=absent

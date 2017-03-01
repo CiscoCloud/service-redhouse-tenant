@@ -1,0 +1,156 @@
+---
+- hosts: "tenant_compute_*"
+  name: "Update novaX hypervisors with VM shutdown"
+
+  vars:
+    - log_base: "/var/log/HIM"
+
+  pre_tasks:
+    - include: requests_workaround.yml
+
+    - name: Ensure that depipe is in our PATH
+      local_action: shell which depipe
+      changed_when: False
+
+    - name: Get date-time
+      local_action: shell date +%F_%H%M%S
+      register: datetime
+      changed_when: False
+
+    - name: Create log directory
+      local_action: shell mkdir -p {{ log_base }}
+      changed_when: False
+
+    - name: Get FQDN
+      shell: hostname
+      register: host_fqdn
+      changed_when: False
+
+    - set_fact: target_fqdn="{{ host_fqdn.stdout }}"
+
+    - name: nova service-disable {{ ansible_hostname }} nova-compute
+      local_action: shell nova service-disable --reason "Down for High Impact Maintenance" {{ target_fqdn }} nova-compute
+
+    - name: Collect instances that are on the hypervisor BEFORE upgrade
+      local_action: shell nova hypervisor-servers {{ target_fqdn }} 2>&1 | tee "{{ log_base }}/{{ inventory_hostname_short }}-vm-list-BEFORE.log"
+      changed_when: False
+
+    - local_action: stat path="{{ log_base }}/{{ inventory_hostname_short }}-pre-HIM-state.log"
+      register: pre_him_logfile
+
+    - name: Backup pre-HIM-state.log if exists
+      local_action: shell cp "{{ log_base }}/{{ inventory_hostname_short }}-pre-HIM-state.log"
+              "{{ log_base }}/{{ inventory_hostname_short }}-pre-HIM-state.log.{{ datetime.stdout }}"
+      when: pre_him_logfile.stat.exists
+
+    - name: Collect VM state from nova list
+      local_action: shell nova list --fields instance_name,status,task_state --all-tenants
+              --host "{{ target_fqdn }}" 2>&1 | tee "{{ log_base }}/{{ inventory_hostname_short }}-pre-HIM-state.log"
+      changed_when: False
+
+    - name: Grab suspended instance IDs
+      local_action: shell fgrep SUSPENDED "{{ log_base }}/{{ inventory_hostname_short }}-pre-HIM-state.log" | depipe | awk '{print $1}'
+      register: suspendedVMs
+      changed_when: False
+
+    - name: Resume suspended VMs (if any) with nova resume
+      local_action: shell nova resume {{ item }} 2>&1; sleep 2
+      with_items: suspendedVMs.stdout_lines
+
+    - name: Grab paused instance IDs
+      local_action: shell fgrep PAUSED "{{ log_base }}/{{ inventory_hostname_short }}-pre-HIM-state.log" | depipe | awk '{print $1}'
+      register: pausedVMs
+      changed_when: False
+
+    - name: Unpause paused VMs (if any) with nova unpause
+      local_action: shell nova unpause {{ item }} 2>&1; sleep 2
+      with_items: pausedVMs.stdout_lines
+
+    - name: Grab active VMs
+      local_action: shell fgrep ACTIVE "{{ log_base }}/{{ inventory_hostname_short }}-pre-HIM-state.log" | depipe | grep None | awk '{print $1}'
+      register: activeVMs
+      changed_when: False
+
+    - name: Gather running VMs from libvirt
+      virt: command=list_vms state=running
+      register: vms_on_node
+
+    - name: Shutdown running instances with virsh shutdown
+      shell: virsh shutdown {{ item }} && sleep 5
+      with_items:
+        - "{{ vms_on_node.list_vms }}"
+      register: shutdown_results
+      ignore_errors: true
+
+    - debug: msg="domain failed to shutdown {{ item.item }} - {{ item.msg }}"
+      with_items: shutdown_results.results
+      when: "'failed' in item and item.failed == 'True'"
+
+    - name: Wait for instances to shutdown and nova to be updated
+      pause: seconds=60
+      changed_when: False
+
+    - name: Check nova hypervisor for any remaining active VMs (if any)
+      local_action: shell nova list --fields instance_name,status,task_state --all-tenants
+              --host {{ target_fqdn }} | fgrep ACTIVE | fgrep None | wc -l
+      register: strugglers
+
+    - name: Try stopping remaining active VMs if any at this point
+      local_action: shell nova list --fields instance_name,status,task_state --all-tenants
+              --host {{ target_fqdn }} | depipe | fgrep ACTIVE | fgrep None | awk '{print \"nova stop\", $1}' | sh
+      when: strugglers.stdout|int != 0
+      ignore_errors: true
+
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+
+    - include: ../roles/puppet/tasks/check_state.yml
+
+    - name: Giving nova-compute 20 seconds to connect to RabbitMQ
+      pause: seconds=20
+      changed_when: False
+
+    - name: start VMs via nova
+      local_action: shell nova start {{ item }} && sleep 5
+      with_items: activeVMs.stdout_lines
+      register: startup_results
+      ignore_errors: true
+
+    - debug: msg="nova failed to start {{ item.item }} - {{ item.stderr }}"
+      with_items: startup_results.results
+      when: "'rc' in item and item.rc != 0"
+
+    - name: Collect instances that are on the hypervisor AFTER upgrade
+      local_action: shell nova hypervisor-servers {{ target_fqdn }} 2>&1 | tee "{{ log_base }}/{{ inventory_hostname_short }}-vm-list-AFTER.log"
+      changed_when: False
+
+    - local_action: stat path="{{ log_base }}/{{ inventory_hostname_short }}-post-HIM-state.log"
+      register: post_him_logfile
+
+    - name: Backup post-HIM-state.log if exists
+      local_action: shell cp "{{ log_base }}/{{ inventory_hostname_short }}-post-HIM-state.log"
+              "{{ log_base }}/{{ inventory_hostname_short }}-post-HIM-state.log.{{ datetime.stdout }}"
+      when: post_him_logfile.stat.exists
+
+    - name: Collect VM state from nova list
+      local_action: shell nova list --fields instance_name,status,task_state --all-tenants
+              --host "{{ target_fqdn }}" 2>&1 | tee "{{ log_base }}/{{ inventory_hostname_short }}-post-HIM-state.log"
+      changed_when: False
+
+    - name: diff vm-list-BEFORE.log vm-list-AFTER.log
+      local_action: shell diff "{{ log_base }}/csx-a-nova3-002-vm-list-BEFORE.log"
+              "{{ log_base }}/csx-a-nova3-002-vm-list-AFTER.log" | fgrep instance | awk '{print $3}'
+      register: compare
+      ignore_errors: true
+      changed_when: False
+
+    - debug: msg="{{ inventory_hostname_short }} DIFFERS {{ item }}"
+      with_items: compare.stdout
+      when: item != ''
+
+    - name: Enable nova-compute service for {{ target }}
+      local_action: shell nova service-enable {{ target_fqdn }} nova-compute

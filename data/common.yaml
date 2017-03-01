@@ -1,0 +1,81 @@
+---
+allowed_hosts: "%"
+localhost: 127.0.0.1
+
+### Common OpenStack Parameters
+# The email address of the administrator user.
+admin_email: root@localhost
+
+# The userid to be assigned for the RPC backend service
+# (e.g. RabbitMQ, Qpid, etc).
+rpc_user: openstack_rabbit_user
+rpc_password: openstack_rabbit_password
+
+verbose: false
+debug: false
+
+# The services and admin tenant names.
+service_tenant: services
+admin_tenant: 'admin'
+
+# The nova admin username
+nova_admin_username: 'nova'
+
+package_ensure: present
+ensure_package: installed
+
+# Syslog
+use_syslog: false
+log_facility: LOG_USER
+
+# Enable nova services.
+enable_nova: true
+
+# The username and password for MongoDB 'admin' database
+mongodb_admin_username: 'admin'
+mongodb_admin_password: 'admin'
+
+# The version of the puppetlabs-mysql module you're using.
+# Supported versions are 0.9 and 2.2.
+puppet_mysql_version: '2.2'
+
+# Default character set and collation order for MySQL
+mysql_default_charset: utf8
+mysql_default_collation: utf8_unicode_ci
+sql_idle_timeout: 30
+
+ceph_cluster_name: 'ceph'
+
+memcached::listen_ip: "%{hiera('bind_address')}"
+openstack-ha::controller::region: "%{hiera('region')}"
+application:
+  - openstack
+password_management: individual
+db_type: galera
+ceilometer_db_type: mysql
+rpc_type: rabbitmq
+cinder_backend: rbd
+glance_backend: rbd
+compute_type: libvirt
+# networking options
+network_service: neutron
+# supports linuxbridge and ovs
+network_plugin: ovs
+network_type: provider-router
+tenant_network_type: vlan
+enable_ha: true
+install_tempest: false
+
+keystone::wsgi::apache::wsgi_chunked_request: 'On'
+
+site_cert_name: ""
+storage_cert_name: ""
+ccsapi_cert_name: ""
+cloudcruiser_cert_name: ""
+
+#VPNaaS
+ncs_controller_vip: ""
+ncs_controller_user: ""
+ncs_controller_password: ""
+ncs_controller_timeout: ""
+

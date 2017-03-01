@@ -1,0 +1,9 @@
+---
+# nova::wsgi
+novawsgi::apache: "%{hiera('controller_public_ip')}"
+
+# nova::wsgi::apache
+novawsgi::apache::ssl: false
+novawsgi::apache::workers: "%{::processorcount}"
+novawsgi::apache::bind_host: 0.0.0.0
+novawsgi::apache::logroot: "/var/log/nova"

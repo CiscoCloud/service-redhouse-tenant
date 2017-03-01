@@ -1,0 +1,16 @@
+---
+- stat: path="{{ kernel_mon }}"
+  register: k_mon_file
+
+- shell: K_VER=$(uname -a | awk '{print $3}'); sed -i "s/^kernel_version=.*/kernel_version=$K_VER/g" {{ kernel_mon }}
+  when: k_mon_file.stat.exists
+
+- stat: path="{{ osp_rel_mon }}"
+  register: osp_mon_file
+
+- shell: rpm -qa |fgrep openstack-nova-compute- | wc -l
+  when: osp_mon_file.stat.exists
+  register: onc_installed
+
+- shell: ONC=$(rpm -qa |fgrep openstack-nova-compute-); sed -i "s/^openstack_nova_compute=.*/openstack_nova_compute=$ONC/g" {{ osp_rel_mon }}
+  when: osp_mon_file.stat.exists and onc_installed.stdout|int > 0

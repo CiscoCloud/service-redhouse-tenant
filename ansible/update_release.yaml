@@ -1,0 +1,56 @@
+---
+- hosts: localhost
+  vars:
+    src_release: "{{ release | default('proposed') }}"
+  tasks:
+    - name: Get Site Repo
+      shell: hiera -c /etc/puppet/hiera.yaml site_repo
+      register: site_repo
+
+    - name: Create mirrors for artifactory repositories
+      shell:  cobbler repo add --name=ccs-artifactory-{{ item }} --mirror-locally=true --breed=yum --arch x86_64 --mirror=https://ccs-artifactory.cisco.com/artifactory/{{ item }}/
+      register: repo_add_out
+      failed_when: repo_add_out.rc != 0 and 'unwise to overwrite' not in repo_add_out.stdout
+      changed_when: repo_add_out.rc == 0
+      with_items:
+        - libguestfs
+        - openstack-keystone-hybrid-driver
+        - daemonize
+        - ccs-repose
+
+    - name: Sync mirrors for artifactory repositories
+      shell:  cobbler reposync --only ccs-artifactory-{{ item }}
+      with_items:
+        - libguestfs
+        - openstack-keystone-hybrid-driver
+        - daemonize
+        - ccs-repose
+
+    - name: Create mirrors for release repos
+      shell:  cobbler repo add --name={{ item }}_{{ target_release }} --mirror-locally=true --breed=yum --arch x86_64 --mirror=https://ccs-mirror.cisco.com/pulp/repos/{{ item }}_{{ src_release }}
+      register: release_add_out
+      failed_when: release_add_out.rc != 0 and 'unwise to overwrite' not in release_add_out.stdout
+      changed_when: release_add_out.rc == 0
+      with_items:
+        - rhel-7-server-openstack-5.0-rpms
+        - rhel-7-server-rpms
+
+    - name: Sync release repo
+      shell:  cobbler reposync --only {{ item }}_{{ target_release }}
+      with_items:
+        - rhel-7-server-openstack-5.0-rpms
+        - rhel-7-server-rpms
+
+    - name: Repo Sync
+      shell: cobbler reposync --only {{ item }}
+      with_items:
+        - rhel-7-server-hybrid-rpms
+        - rhel-7-server-openstack-6.0-rpms
+
+    - name: Get repo list
+      shell: cobbler repo list| sed -e 's/\s*//g' | grep -v "_{{ target_release }}" | grep -v rhel-7-server-openstack-5.0-rpms | grep -v rhel-7-server-rpms
+      register: repo_list
+
+    - name: Create Symlinks for remaining repos
+      file: src=/var/www/cobbler/repo_mirror/"{{ item }}" dest=/var/www/cobbler/repo_mirror/"{{ item }}"_"{{ target_release }}" state=link
+      with_items: repo_list.stdout_lines

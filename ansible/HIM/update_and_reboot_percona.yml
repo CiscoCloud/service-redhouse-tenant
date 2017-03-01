@@ -1,0 +1,33 @@
+---
+- hosts: "~(.*)percona-001"
+  name: "Update percona-001"
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: "~(.*)percona-002"
+  name: "Update percona-002"
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: "~(.*)percona-003"
+  name: "Update percona-003"
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml

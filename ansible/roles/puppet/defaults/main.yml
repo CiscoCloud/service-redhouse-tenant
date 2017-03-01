@@ -1,0 +1,8 @@
+---
+#redhouse_version: "*"
+#data_version: "*"
+service: 'redhouse-tenant'
+args: ''
+log_dir: /var/log/puppet_run
+log_name: "puppet_run_{{ ansible_date_time.date }}_{{ ansible_date_time.epoch }}"
+osp_rel_mon: "/usr/share/check-mk-agent/local/check_openstack_release_compute"

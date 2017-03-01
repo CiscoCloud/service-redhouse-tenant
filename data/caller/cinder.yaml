@@ -1,0 +1,85 @@
+---
+# cinder
+cinder::database_max_pool_size: 100
+cinder::mysql_module: 2.3
+cinder::rpc_type: 'cinder.openstack.common.rpc.impl_kombu'
+cinder::debug: false
+cinder::log_facility: LOG_USER
+cinder::qpid_password: "%{hiera('rpc_password')}"
+cinder::rabbit_password: "%{hiera('rpc_password')}"
+cinder::rabbit_userid: "%{hiera('rpc_user')}"
+cinder::sql_idle_timeout: 30
+cinder::use_syslog: false
+cinder::verbose: false
+cinder::sql_connection: "mysql://cinder:%{hiera('cinder::db::mysql::password')}@%{hiera('mysql_vip')}/cinder"
+cinder::control_exchange: 'cinder'
+
+# cinder::api
+cinder::api::keystone_password: "%{hiera('cinder_service_password')}"
+cinder::api::default_volume_type: 'generic'
+
+# cinder::backend
+cinder::backends::enabled_backends: ['generic']
+
+# cinder::ceilometer
+cinder::ceilometer::notification_driver: 'cinder.openstack.common.notifier.rpc_notifier'
+
+# cinder::config
+cinder::config::cinder_config:
+  # Allow destination machine to match source for resize
+  'DEFAULT/host':
+    value: "%{hiera('site_fqdn')}"
+  # Automatically confirm resizes after N seconds.  Set to 0 to disable.
+  'DEFAULT/glance_host':
+    value: "%{hiera('controller_internal_address')}"
+  'DEFAULT/glance_api_version':
+    value: '2'
+  'DEFAULT/volume_usage_audit_period':
+    value: 'hour'
+  'DEFAULT/notification_topics':
+    value: 'notifications,cc_cinder'
+
+# cinder::keystone::auth
+cinder::keystone::auth::password: "%{hiera('cinder_service_password')}"
+cinder::keystone::auth::admin_address: "%{hiera('controller_admin_address')}"
+cinder::keystone::auth::internal_address: "%{hiera('controller_internal_address')}"
+cinder::keystone::auth::password: "%{hiera('cinder_service_password')}"
+cinder::keystone::auth::public_address: "%{hiera('controller_public_address')}"
+cinder::keystone::auth::public_protocol: "%{hiera('controller_public_protocol')}"
+cinder::keystone::auth::region: "%{hiera('region')}"
+
+# cinder::db::mysql
+cinder::db::mysql::mysql_module: 2.3
+cinder::db::mysql::charset: "%{hiera('mysql_default_charset')}"
+cinder::db::mysql::collate: "%{hiera('mysql_default_collation')}"
+cinder::db::mysql::allowed_hosts: "%{hiera('allowed_hosts')}"
+cinder::db::mysql::host: "%{hiera('localhost')}"
+
+# cinder::scheduler
+cinder::scheduler::scheduler_driver: 'cinder.scheduler.simple.SimpleScheduler'
+cinder::scheduler::package_ensure: present
+
+# cinder::volume
+cinder::volume::package_ensure: present
+
+# cinder::volume::rbd
+cinder::volume::rbd::rbd_user: "%{hiera('ceph_cinder_user')}"
+cinder::volume::rbd::rbd_pool: "%{hiera('cinder_rbd_pool')}"
+cinder::volume::rbd::rbd_secret_uuid: "%{hiera('ceph_monitor_fsid')}"
+cinder::volume::volume_backend_name: 'generic'
+
+# cinder::volume::solidfire
+cinder::volume::volume_backend_name: 'solidfire'
+cinder::volume::volume_driver: 'cinder.volume.drivers.solidfire.SolidFireDriver'
+cinder::volume::san_ip: "%{hiera('solidfire_san_ip')}"
+cinder::volume::san_login: "%{hiera('solidfire_san_login')}"
+cinder::volume::san_password: "%{hiera('solidfire_san_password')}"
+
+# cinder::api
+cinder::api::bind_host: "%{hiera('bind_address')}"
+cinder::api::keystone_auth_host: "%{hiera('controller_internal_address')}"
+cinder::api::keystone_password: "%{hiera('cinder_service_password')}"
+cinder::api::package_ensure: present
+
+# cinder::glance
+cinder::glance::glance_api_servers: "%{hiera('controller_internal_address')}:9292"

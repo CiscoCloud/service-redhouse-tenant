@@ -1,0 +1,120 @@
+---
+- name: "OSP1CIS-44: TSI PEN TEST 2 - To patch systems according to vulnerability"
+  hosts: redhouse-tenant
+  tags: OSP1CIS-44
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: bind-utils, grep: bind-utils-9.9.4-18.el7_1.5.x86_64 }
+         - { name: bind-libs-lite, grep: bind-libs-lite-9.9.4-18.el7_1.5.x86_64 }
+         - { name: bind-libs, grep: bind-libs-9.9.4-18.el7_1.5.x86_64 }
+         - { name: bind-license, grep: bind-license-9.9.4-18.el7_1.5.noarch }
+         - { name: binutils, grep: binutils-2.23.52.0.1-55.el7.x86_64 }
+         - { name: file, grep: file-5.11-31.el7.x86_64 }
+         - { name: file-libs, grep: file-libs-5.11-31.el7.x86_64 }
+         - { name: libssh2, grep: libssh2-1.4.3-10.el7.x86_64 }
+         - { name: kernel, grep: kernel-3.10.0-229.26.2.el7.x86_64 }
+         - { name: kernel-tools, grep: kernel-tools-3.10.0-229.26.2.el7.x86_64 }
+         - { name: kernel-tools-libs, grep: kernel-tools-libs-3.10.0-229.26.2.el7.x86_64 }
+         - { name: nspr, grep: nspr-4.10.8-2.el7_1.x86_64 }
+         - { name: nss, grep: nss-3.19.1-7.el7_1.2.x86_64 }
+         - { name: nss-softokn, grep: nss-softokn-3.16.2.3-13.el7_1.x86_64 }
+         - { name: nss-softokn-freebl, grep: nss-softokn-freebl-3.16.2.3-13.el7_1.x86_64 }
+         - { name: nss-sysinit, grep: nss-sysinit-3.19.1-7.el7_1.2.x86_64 }
+         - { name: nss-tools, grep: nss-tools-3.19.1-7.el7_1.2.x86_64 }
+         - { name: nss-util, grep: nss-util-3.19.1-4.el7_1.x86_64 }
+         - { name: python, grep: python-2.7.5-34.el7.x86_64 }
+         - { name: python-libs, grep: python-libs-2.7.5-34.el7.x86_64 }
+
+- name: "OSP1CIS-44: TSI PEN TEST 2 - To patch java1.8.0 on select hosts"
+  hosts: "redhouse-tenant:!*cinderctl*:!*horizon*:!*mongodb*:!*net*:!*nova1*:!*nova2*:!*nova3*:!*percona*:!*proxy*:!*rabbitmq*"
+  tags: OSP1CIS-44
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: java-1.8.0-openjdk, grep: java-1.8.0-openjdk-1.8.0.65-2.b17.el7_1.x86_64 }
+         - { name: java-1.8.0-openjdk-headless, grep: java-1.8.0-openjdk-headless-1.8.0.65-2.b17.el7_1.x86_64 }
+
+- name: "OSP1CIS-57: NCSE-7881 - Virginia: Multiple Vulnerabilities in RabbitMQ User Interface"
+  hosts: "*rabbitmq*:!*-web-*"
+  tags: OSP1CIS-57
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: rabbitmq-server, grep: rabbitmq-server-3.3.5-18.el7ost.noarch }
+
+- name: "OSP1CIS-67: high-severity vulnerability in Gnu C Library (glibc)"
+  hosts: redhouse-tenant
+  tags: OSP1CIS-67
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: glibc, grep: glibc-2.17-79.el7_1.4.x86_64 }
+         - { name: glibc-common, grep: glibc-common-2.17-79.el7_1.4.x86_64 }
+
+- name: "OSP1CIS-41: SSH Daemons are not hardened appropriately"
+  hosts: "redhouse-tenant:!*horizon*"
+  tags: OSP1CIS-41
+  tasks:
+    - name: "Checking that X11 Forwarding is disabled"
+      shell: "egrep '^X11Forwarding\\s+no' /etc/ssh/sshd_config"
+    - name: "Checking that AllowTcpForwarding is disabled"
+      shell: "egrep '^AllowTcpForwarding\\s+no' /etc/ssh/sshd_config"
+
+
+- name: "OSP1CIS-39: Qemu is not using selinux extensions (svirt)"
+  hosts: "tenant_compute_local:tenant_compute_rbd"
+  tags: OSP1CIS-39
+  tasks:
+      - name: "Checking that SELinux is set to Enforcing"
+        shell: "sestatus | egrep 'Current mode:\\s*enforcing'"
+      - name: "Check if we have any qemu-kvm processes"
+        shell: "ps -eZ | fgrep qemu-kvm | wc -l"
+        register: vm_count
+      - name: "Checking that svirt extension is enabled for qemu-kvm"
+        shell: "ps -eZ | grep qemu-kvm | grep svirt_t"
+        when: vm_count.stdout|int > 0
+
+- name: "OSP1CIS-43: Disable the ipv6 on all platform components for security feature enhancements"
+  hosts: "redhouse-tenant:!*horizon*"
+  tags: OSP1CIS-43
+  tasks:
+      - name: "Checking net.ipv6.conf.all.disable_ipv6 setting"
+        shell: "sysctl net.ipv6.conf.all.disable_ipv6 | grep 1"
+
+- name: "OSP1CIS-116: Turn off verbose logging mode in Cinder"
+  hosts: tenant_cinder_ctl
+  tags: OSP1CIS-116
+  tasks:
+      - name: "Checking cinder.conf"
+        shell: "grep -i ^verbose=False /etc/cinder/cinder.conf"
+
+- name: "OSP1CIS-68: Set heat's max_nested_stack_depth = 6"
+  hosts: tenant_heat_ctl
+  tags: OSP1CIS-68
+  tasks:
+      - name: "Checking heat.conf"
+        shell: "egrep '^max_nested_stack_depth(\\s*)=(\\s*)6' /etc/heat/heat.conf"
+
+- name: "OSP1CIS-83: Apache HTTPD CVE-2015-3183 / CVE-2015-3185 / RHSA-2015:1667"
+  hosts: "*novactl*:*keystonectl*:"
+  tags: OSP1CIS-83
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: httpd, grep: httpd-2.4.6-31.el7_1.1.x86_64 }
+         - { name: httpd-tools, grep: httpd-tools-2.4.6-31.el7_1.1.x86_64 }
+
+- name: "OSP1CIS-52: neutron-ha-tool random L3 agent rebalancing"
+  hosts: "*neutronapi*:"
+  tags: OSP1CIS-52
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: neutron-ha-tool, grep: neutron-ha-tool-1.0.0-9 }

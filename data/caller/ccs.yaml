@@ -1,0 +1,2665 @@
+---
+# ccs::base
+ccs::base::repo::build_node_name: "%{hiera('build_node_name')}"
+ccs::base::common::packages:
+  - bind-utils
+  - curl
+  - ltrace
+  - socat
+  - strace
+  - sysstat
+  - tcpdump
+  - telnet
+  - vim-enhanced
+  - vim-common
+  - sos
+  - sos-plugins-openstack
+  - lsof
+  - mlocate
+  - screen
+  - tmux
+  - iotop
+  - bash-completion
+  - pssh
+  - bc
+  - psmisc
+
+# ccs::base
+ccs::base::common::packages_remove:
+  - wpa_supplicant
+
+# ccs::base
+ccs::base::common::files_no_suid:
+  - /sbin/pam_timestamp_check
+  - /sbin/unix_chkpwd
+  - /sbin/userhelper
+  - /sbin/usernetctl
+
+# ccs::base::sysctl
+# must be strings to pass to sysctl::value
+ccs::base::sysctl::settings:
+  'net.ipv4.tcp_challenge_ack_limit':
+    value: '2147483647'
+  'net.ipv4.tcp_keepalive_time':
+    value: '10'
+  'net.ipv4.tcp_keepalive_probes':
+    value: '6'
+  'net.ipv4.tcp_keepalive_intvl':
+    value: '10'
+  'net.ipv4.tcp_retries2':
+    value: '3'
+
+# ccs::certs::ssl
+ccs::certs::ssl::region: "%{hiera('region')}"
+ccs::certs::ssl::site_cert_name: "%{hiera('site_cert_name')}"
+ccs::certs::ssl::storage_cert_name: "%{hiera('storage_cert_name')}"
+ccs::certs::ssl::ccsapi_cert_name: "%{hiera('ccsapi_cert_name')}"
+ccs::certs::ssl::cloudcruiser_cert_name: "%{hiera('cloudcruiser_cert_name')}"
+
+# ccs::build::packages
+ccs::build::packages:
+  - python-passlib
+
+# ccs::neutron
+ccs::neutron::base::packages:
+  - nmap
+
+# ccs::neutron::sysctl
+ccs::neutron::sysctl::settings:
+  'net.ipv4.tcp_keepalive_time':
+    value: '10'
+  'net.ipv4.tcp_keepalive_probes':
+    value: '6'
+  'net.ipv4.tcp_keepalive_intvl':
+    value: '10'
+  'net.ipv4.neigh.default.gc_thresh1':
+    value: '1024'
+  'net.ipv4.neigh.default.gc_thresh2':
+    value: '4096'
+  'net.ipv4.neigh.default.gc_thresh3':
+    value: '8192'
+  'net.ipv6.neigh.default.gc_thresh1':
+    value: '1024'
+  'net.ipv6.neigh.default.gc_thresh2':
+    value: '4096'
+  'net.ipv6.neigh.default.gc_thresh3':
+    value: '8192'
+  'net.netfilter.nf_conntrack_tcp_be_liberal':
+    value: '1'
+  'net.netfilter.nf_conntrack_tcp_timeout_close':
+    value: '10'
+  'net.netfilter.nf_conntrack_tcp_timeout_close_wait':
+    value: '60'
+  'net.netfilter.nf_conntrack_tcp_timeout_established':
+    value: '21600'
+  'net.netfilter.nf_conntrack_tcp_timeout_fin_wait':
+    value: '120'
+  'net.netfilter.nf_conntrack_tcp_timeout_last_ack':
+    value: '30'
+  'net.netfilter.nf_conntrack_tcp_timeout_max_retrans':
+    value: '300'
+  'net.netfilter.nf_conntrack_tcp_timeout_syn_recv':
+    value: '60'
+  'net.netfilter.nf_conntrack_tcp_timeout_syn_sent':
+    value: '120'
+  'net.netfilter.nf_conntrack_tcp_timeout_time_wait':
+    value: '120'
+  'net.netfilter.nf_conntrack_tcp_timeout_unacknowledged':
+    value: '300'
+  'net.netfilter.nf_conntrack_max':
+    value: '524288'
+  'net.ipv4.conf.default.arp_announce':
+    value: '1'
+  'net.ipv4.tcp_retries2':
+    value: '3'
+
+# ccs::certs::ssl
+#ccs::certs::ssl::region: "%{hiera('region')}"
+#ccs::certs::ssl::site_cert_name: "%{hiera('site_cert_name')}"
+#ccs::certs::ssl::storage_cert_name: "%{hiera('storage_cert_name')}"
+
+# ccs::compute::rbd
+ccs::compute::base::ceph_cinder_user: "%{hiera('ceph_cinder_user')}"
+ccs::compute::base::ceph_cinder_secret: "%{hiera('cinder_secret')}"
+ccs::compute::base::cinder_rbd_secret_uuid: "%{hiera('cinder_rbd_secret_uuid')}"
+
+# ccs::compute::sysctl
+# must be strings to pass to sysctl::value
+ccs::compute::sysctl::settings:
+  'kernel.pid_max':
+    value: '524288'
+  'net.netfilter.nf_conntrack_tcp_be_liberal':
+    value: '1'
+  'net.netfilter.nf_conntrack_tcp_timeout_close':
+    value: '10'
+  'net.netfilter.nf_conntrack_tcp_timeout_close_wait':
+    value: '60'
+  'net.netfilter.nf_conntrack_tcp_timeout_established':
+    value: '21600'
+  'net.netfilter.nf_conntrack_tcp_timeout_fin_wait':
+    value: '120'
+  'net.netfilter.nf_conntrack_tcp_timeout_last_ack':
+    value: '30'
+  'net.netfilter.nf_conntrack_tcp_timeout_max_retrans':
+    value: '300'
+  'net.netfilter.nf_conntrack_tcp_timeout_syn_recv':
+    value: '60'
+  'net.netfilter.nf_conntrack_tcp_timeout_syn_sent':
+    value: '120'
+  'net.netfilter.nf_conntrack_tcp_timeout_time_wait':
+    value: '120'
+  'net.netfilter.nf_conntrack_tcp_timeout_unacknowledged':
+    value: '300'
+  'net.netfilter.nf_conntrack_max':
+    value: '524288'
+  'net.bridge.bridge-nf-call-arptables':
+    value: '1'
+  'net.bridge.bridge-nf-call-ip6tables':
+    value: '1'
+  'net.bridge.bridge-nf-call-iptables':
+    value: '1'
+  'net.ipv6.conf.all.disable_ipv6':
+    value: '1'
+  'net.ipv6.conf.default.disable_ipv6':
+    value: '1'
+  'net.ipv6.conf.lo.disable_ipv6':
+    value: '1'
+  'net.ipv4.tcp_keepalive_time':
+    value: '10'
+  'net.ipv4.tcp_keepalive_probes':
+    value: '6'
+  'net.ipv4.tcp_keepalive_intvl':
+    value: '10'
+  'net.ipv4.tcp_retries2':
+    value: '3'
+
+# libvirt tuning for compute nodes
+ccs::compute::libvirt::settings:
+   '/etc/libvirt/libvirtd.conf max_clients':
+        line: 'max_clients = 200'
+        match: 'max_clients ='
+   '/etc/libvirt/libvirtd.conf min_workers':
+        line: 'min_workers = 5'
+        match: 'min_workers ='
+   '/etc/libvirt/libvirtd.conf max_workers':
+        line: 'max_workers = 200'
+        match: 'max_workers ='
+   '/etc/libvirt/libvirtd.conf prio_workers':
+        line: 'prio_workers = 25'
+        match: 'prio_workers ='
+   '/etc/libvirt/libvirtd.conf max_requests':
+        line: 'max_requests = 200'
+        match: 'max_requests ='
+   '/etc/libvirt/libvirtd.conf max_client_requests':
+        line: 'max_client_requests = 25'
+        match: 'max_client_requests ='
+# cinder::volume
+ccs::cinder_volume::os_password: "%{hiera('admin_password')}"
+ccs::cinder_volume::os_username: "admin"
+ccs::cinder_volume::os_tenant_name: "admin"
+ccs::cinder_volume::os_auth_url: "http://%{hiera('controller_admin_address')}:5000/v2.0"
+# cinder::volume::rbd
+cinder::volume::rbd::rbd_user: "%{hiera('ceph_cinder_user')}"
+cinder::volume::rbd::rbd_pool: "%{hiera('cinder_rbd_pool')}"
+cinder::volume::rbd::rbd_secret_uuid: "%{hiera('ceph_monitor_fsid')}"
+cinder::volume::rbd::volume_tmp_dir: '/var/lib/cinder/tmp'
+
+# cinder solidfire volumes
+ccs::cinder_volume::solidfire_volumes:
+  'PIB-200':
+    set_value: 'solidfire qos:minIOPS=200 qos:maxIOPS=250 qos:burstIOPS=500'
+  'PIB-500':
+    set_value: 'solidfire qos:minIOPS=500 qos:maxIOPS=600 qos:burstIOPS=1250'
+  'PIB-1000':
+    set_value: 'solidfire qos:minIOPS=1000 qos:maxIOPS=1200 qos:burstIOPS=2500'
+  'PIB-2500':
+    set_value: 'solidfire qos:minIOPS=2500 qos:maxIOPS=3000 qos:burstIOPS=5000'
+  'PIB-5000':
+    set_value: 'solidfire qos:minIOPS=5000 qos:maxIOPS=6000 qos:burstIOPS=10000'
+
+# cinder_api limits
+ccs::cinder_api::systemd::limitnofile: '65535'
+ccs::cinder_api::sysctl::settings:
+  'kernel.pid_max':
+    value: '262144'
+
+# cinder_volume limits
+ccs::cinder_volume::systemd::limitnofile: '131072'
+
+# This works because we are using hiera_hash to search and
+# merge multiple keystone_config hashes. We are doing so
+# in the ccs class, which is why the calling class gets updated
+# to 'ccs' rather than keystone. However, for the merge to be
+# successful, we need to preserve the key name.
+# keystone::config
+keystone::config::keystone_config:
+  'ec2/driver':
+    value: 'keystone.contrib.ec2.backends.sql.Ec2'
+  'identity/driver':
+    value: 'keystone.identity.backends.hybrid.Identity'
+  'paste_deploy/config_file':
+    value: '/etc/keystone/keystone-paste.ini'
+  'ldap/tls_cacertfile':
+    value: '/etc/ssl/certs/ca-bundle.crt'
+  'ldap/tls_cacertdir':
+    value: '/etc/ssl/certs'
+
+ccs::keystone::hybrid_driver::package_version: '2014.1.4-1'
+
+# This works because we are using hiera_hash to search and
+# merge multiple nova_config hashes. We are doing so
+# in the ccs class, which is why the calling class gets updated
+# to 'ccs' rather than nova. However, for the merge to be
+# successful, we need to preserve the key name.
+# nova::config
+nova::config::nova_config:
+  'DEFAULT/force_dhcp_release':
+    value: 'True'
+  'DEFAULT/dhcp_domain':
+    value: 'cisco.com'
+  'DEFAULT/allow_resize_to_same_host':
+    value: 'true'
+  'DEFAULT/injected_network_template':
+    value: '/usr/share/nova/interfaces.template'
+  'DEFAULT/resize_confirm_window':
+    value: '0'
+  'DEFAULT/config_drive_format':
+    value: 'vfat'
+  'DEFAULT/resume_guests_state_on_host_boot':
+    value: 'true'
+  'DEFAULT/max_local_block_devices':
+    value: '-1'
+  'DEFAULT/osapi_max_limit':
+    value: '5000'
+  'DEFAULT/osapi_max_request_body_size':
+    value: '114688'
+  'DEFAULT/novncproxy_base_url':
+    value: "%{hiera('controller_public_protocol')}://%{hiera('controller_public_address')}:6080/vnc_auto.html"
+  'conductor/use_local':
+    value: 'false'
+  'libvirt/live_migration_flag':
+    value: 'VIR_MIGRATE_UNDEFINE_SOURCE,VIR_MIGRATE_PEER2PEER,VIR_MIGRATE_LIVE,VIR_MIGRATE_AUTO_CONVERGE'
+  'database/max_pool_size':
+    value: '75'
+  'database/max_overflow':
+    value: '150'
+  'libvirt/snapshot_image_format':
+    value: 'qcow2'
+  'DEFAULT/rpc_thread_pool_size':
+    value: '2048'
+  'DEFAULT/rpc_conn_pool_size':
+    value: '60'
+  'DEFAULT/rpc_response_timeout':
+    value: '960'
+  'workarounds/rhosp_disk_io_policies':
+    value: 'file=threads,network=native'
+
+# Nova Policy.json
+ccs::nova::policy::policies:
+  'comepute:rebuild':
+    key: 'compute:rebuild'
+    value: 'is_admin:True'
+  'compute:resize':
+    key: 'compute:resize'
+    value: 'is_admin:True'
+  'compute_extension:flavormanage':
+    key: 'compute_extension:flavormanage'
+    value: 'role:flavor_admin'
+  'compute_extension:simple_tenant_usage:list':
+    key: 'compute_extension:simple_tenant_usage:list'
+    value: 'role:usage_admin'
+  'compute_extension:v3:flavor-manage':
+    key: 'compute_extension:v3:flavor-manage'
+    value: 'role:flavor_admin'
+  'compute_extension:flavorextraspecs:create':
+    key: 'compute_extension:flavorextraspecs:create'
+    value: 'role:flavor_admin'
+  'compute_extension:flavorextraspecs:update':
+    key: 'compute_extension:flavorextraspecs:update'
+    value: 'rule:flavor_admin'
+  'compute_extension:flavorextraspecs:delete':
+    key: 'compute_extension:flavorextraspecs:delete'
+    value: 'role:flavor_admin'
+  'compute_extension:v3:flavor-extra-specs:create':
+    key: 'compute_extension:v3:flavor-extra-specs:create'
+    value: 'rule:flavor_admin'
+  'compute_extension:v3:flavor-extra-specs:update':
+    key: 'compute_extension:v3:flavor-extra-specs:update'
+    value: 'rule:flavor_admin'
+  'compute_extension:v3:flavor-extra-specs:delete':
+    key: 'compute_extension:v3:flavor-extra-specs:delete'
+    value: 'rule:flavor_admin'
+# Glance Policy.json
+ccs::glance::policy::policies:
+  'publicize_image':
+    key: 'publicize_image'
+    value: 'role:admin'
+# Neutron Policy.json
+ccs::neutron::policy::policies:
+  'get_firewall_policy':
+    key: 'get_firewall_policy'
+    value: 'rule:admin_or_owner'
+  'get_firewall_rule':
+    key: 'get_firewall_rule'
+    value: 'rule:admin_or_owner'
+  'create_shared_firewall_policy':
+    key: 'create_firewall_policy:shared'
+    value: 'rule:admin_only'
+
+# ccs::glance::systemd
+ccs::glance::systemd::limitnofile: 'infinity'
+ccs::glance::systemd::limitcpu: 'infinity'
+ccs::glance::systemd::limitfsize: 'infinity'
+ccs::glance::systemd::limitdata: 'infinity'
+ccs::glance::systemd::limitstack: 'infinity'
+ccs::glance::systemd::limitcore: 'infinity'
+ccs::glance::systemd::limitrss: 'infinity'
+ccs::glance::systemd::limitas: 'infinity'
+ccs::glance::systemd::limitnproc: 'infinity'
+ccs::glance::systemd::limitmemlock: 'infinity'
+ccs::glance::systemd::limitlocks: 'infinity'
+ccs::glance::systemd::limitsigpending: 'infinity'
+ccs::glance::systemd::limitmsgqueue: 'infinity'
+ccs::glance::systemd::limitnice: 'infinity'
+ccs::glance::systemd::limitrtprio: 'infinity'
+ccs::glance::systemd::limitrttime: 'infinity'
+
+# Gleek
+ccs::gleek::rbd_user: "%{hiera('ceph_glance_user')}"
+ccs::gleek::glance_user: "glance"
+ccs::gleek::glance_password: "%{hiera('glance_service_password')}"
+ccs::gleek::service_tenant: "services"
+ccs::gleek::auth_url: "%{hiera('controller_public_protocol')}://%{hiera('controller_internal_address')}:5000/v2.0"
+
+
+# ccs::rabbitmq::systemd
+ccs::rabbitmq::systemd::limitnofile: 'infinity'
+ccs::rabbitmq::systemd::limitcpu: 'infinity'
+ccs::rabbitmq::systemd::limitfsize: 'infinity'
+ccs::rabbitmq::systemd::limitdata: 'infinity'
+ccs::rabbitmq::systemd::limitstack: 'infinity'
+ccs::rabbitmq::systemd::limitcore: 'infinity'
+ccs::rabbitmq::systemd::limitrss: 'infinity'
+ccs::rabbitmq::systemd::limitas: 'infinity'
+ccs::rabbitmq::systemd::limitnproc: 'infinity'
+ccs::rabbitmq::systemd::limitmemlock: 'infinity'
+ccs::rabbitmq::systemd::limitlocks: 'infinity'
+ccs::rabbitmq::systemd::limitsigpending: 'infinity'
+ccs::rabbitmq::systemd::limitmsgqueue: 'infinity'
+ccs::rabbitmq::systemd::limitnice: 'infinity'
+ccs::rabbitmq::systemd::limitrtprio: 'infinity'
+ccs::rabbitmq::systemd::limitrttime: 'infinity'
+
+# ccs::ceph::sysctl
+# must be strings to pass to sysctl::value
+ccs::ceph::sysctl::settings:
+  'kernel.pid_max':
+    value: '524288'
+  'vm.min_free_kbytes':
+    value: '2097152'
+
+# ccs::ceph::packages
+ccs::ceph::packages:
+  - cisco-disks-smartmontools
+
+# ccs::dns::packages:
+  - bind-chroot
+
+# Mongo Schema Changes/settings
+ccs::mongodb::schema::database: 'ceilometer'
+ccs::mongodb::schema::indexes:
+  events:
+    events_ttl:
+      ttl: 1209600
+      column: timestamp
+
+# Repose settings
+# Setup optional Repose Filters
+ccs::repose::api_validator:
+  tenant_ceilometer_ctl:
+    enabled: true
+    wadl: 'os-telemetry-api-2.0.wadl'
+  tenant_glance_ctl:
+    enabled: true
+    wadl: 'image-api/src/v2/os-image-v2.wadl'
+  tenant_keystone_ctl:
+    enabled: true
+    wadl: 'identity.wadl'
+  tenant_heat_ctl:
+    enabled: true
+    wadl: 'orchestration-api.wadl'
+  tenant_nova_ctl:
+    enabled: true
+    wadl: 'compute-api/src/v2/wadl/os-compute-2-ext.wadl'
+    check_well_formed: true
+  tenant_neutron_api:
+    enabled: false
+  tenant_cinder_ctl:
+    enabled: true
+
+# Repose Identity Configuration
+ccs::repose::openstack_identity_v3::admin_user: admin
+ccs::repose::openstack_identity_v3::admin_password: "%%{}{hiera('admin_password')}"
+ccs::repose::openstack_identity_v3::keystone_endpoint: "%%{}{hiera('controller_internal_url')}"
+
+# Repose Container Configuration
+ccs::repose::container::appenders:
+  - name: 'json_log'
+    max_size: '1024 MB'
+    retain: 14
+    pattern: '%m%n'
+    file_name: '/var/log/repose/json_log.log'
+  - name: 'ncsa_log'
+    layout: '%m%n'
+    max_size: '1024 MB'
+    retain: 14
+    pattern: '%m%n'
+    file_name: '/var/log/repose/access_log.log'
+  - name: 'pre_filter_log'
+    layout: '%m%n'
+    max_size: '1024 MB'
+    retain: 14
+    pattern: '%m%n'
+    file_name: '/var/log/repose/pre_filter_access.log'
+
+ccs::repose::container::loggers:
+  - name: 'pre_filter_log'
+    appender: 'pre_filter_log'
+    log_level: 'info'
+    additivity: 'false'
+  - name: 'json_log'
+    appender: 'json_log'
+    log_level: 'info'
+    additivity: 'false'
+  - name: 'ncsa_log'
+    appender: 'ncsa_log'
+    log_level: 'info'
+    additivity: 'false'
+  - name: 'cisco.openstack.repose.filters'
+    appender: 'RollingFile'
+    log_level: 'info'
+    additivity: 'false'
+
+# Repose System Model Configuration
+ccs::repose::system_model::app_name: "apigw"
+ccs::repose::system_model::port: "8080"
+ccs::repose::system_model::node_key:
+  tenant_heat_ctl: "heat_hostnames"
+  tenant_glance_ctl: "glance_hostnames"
+  tenant_ceilometer_ctl: "ceilometer_hostnames"
+  tenant_keystone_ctl: "keystone_hostnames"
+  tenant_nova_ctl: "nova_hostnames"
+  tenant_neutron_api: "neutron_hostnames"
+  tenant_cinder_ctl: "cinder_hostnames"
+
+ccs::repose::system_model::backend:
+  tenant_heat_ctl:
+    - id: 'localhost'
+      protocol: 'http'
+      hostname: "%%{}{hiera('bind_address')}"
+      root-path: '/'
+      port: 8004
+      default: true
+  tenant_keystone_ctl:
+    - id: 'localhost'
+      protocol: 'http'
+      hostname: "%%{}{hiera('bind_address')}"
+      root-path: '/'
+      port: 5000
+      default: true
+  tenant_glance_ctl:
+    - id: 'localhost'
+      protocol: 'http'
+      hostname: "%%{}{hiera('bind_address')}"
+      root-path: '/'
+      port: 9292
+      default: true
+  tenant_cinder_ctl:
+    - id: 'localhost'
+      protocol: 'http'
+      hostname: "%%{}{hiera('bind_address')}"
+      root-path: '/'
+      port: 8776
+      default: true
+  tenant_ceilometer_ctl:
+    - id: 'localhost'
+      protocol: 'http'
+      hostname: "%%{}{hiera('bind_address')}"
+      root-path: '/'
+      port: 8777
+      default: true
+  tenant_nova_ctl:
+    - id: 'localhost'
+      protocol: 'http'
+      hostname: "%%{}{hiera('bind_address')}"
+      root-path: '/'
+      port: 8774
+      default: true
+  tenant_neutron_api:
+    - id: 'localhost'
+      protocol: 'http'
+      hostname: "%%{}{hiera('bind_address')}"
+      root-path: '/'
+      port: 9696
+      default: true
+
+ccs::repose::system_model::filters:
+  tenant_ceilometer_ctl:
+    05:
+      name: slf4j-http-logging
+      configuration: pre_filter_log.cfg.xml
+    10:
+      name: header-translation
+    15:
+      name: ip-identity
+    20:
+      name: openstack-identity-v3
+    30:
+      name: rate-limiting
+    40:
+      name: slf4j-http-logging
+  tenant_glance_ctl:
+    05:
+      name: slf4j-http-logging
+      configuration: pre_filter_log.cfg.xml
+    10:
+      name: header-translation
+    15:
+      name: ip-identity
+    20:
+      name: openstack-identity-v3
+    30:
+      name: rate-limiting
+    40:
+      name: slf4j-http-logging
+    50:
+      name: block-private-image-download
+    60:
+      name: block-glance-image-http-download
+  tenant_nova_ctl:
+    05:
+      name: slf4j-http-logging
+      configuration: pre_filter_log.cfg.xml
+    10:
+      name: header-translation
+    15:
+      name: ip-identity
+    20:
+      name: openstack-identity-v3
+    30:
+      name: rate-limiting
+    40:
+      name: slf4j-http-logging
+    50:
+      name: block-private-image-snapshot
+  tenant_heat_ctl:
+    05:
+      name: slf4j-http-logging
+      configuration: pre_filter_log.cfg.xml
+    10:
+      name: header-translation
+    15:
+      name: ip-identity
+    20:
+      name: openstack-identity-v3
+    30:
+      name: rate-limiting
+    40:
+      name: api-validator
+    70:
+      name: slf4j-http-logging
+  tenant_keystone_ctl:
+    05:
+      name: slf4j-http-logging
+      configuration: pre_filter_log.cfg.xml
+    15:
+      name: ip-identity
+    30:
+      name: rate-limiting
+    60:
+      name: block-remote-admin
+    70:
+      name: slf4j-http-logging
+  tenant_neutron_api:
+    05:
+      name: slf4j-http-logging
+      configuration: pre_filter_log.cfg.xml
+    10:
+      name: header-translation
+    15:
+      name: ip-identity
+    20:
+      name: openstack-identity-v3
+    30:
+      name: rate-limiting
+    40:
+      name: slf4j-http-logging
+  tenant_cinder_ctl:
+    05:
+      name: slf4j-http-logging
+      configuration: pre_filter_log.cfg.xml
+    15:
+      name: ip-identity
+    30:
+      name: rate-limiting
+    40:
+      name: slf4j-http-logging
+# Repose Rate Limiting Setup
+ccs::repose::rate_limiting::limit_groups:
+  tenant_heat_ctl:
+    - id: 'limited'
+      groups: 'limited'
+      default: true
+      limits:
+      - uri: "/v1"
+        uri_regex: "/v1"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks"
+        uri_regex: "/v1/.+/stacks"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks"
+        uri_regex: "/v1/.+/stacks"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/preview"
+        uri_regex: "/v1/.+/stacks/preview"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name"
+        uri_regex: "/v1/.+/stacks/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '50'
+      - uri: "/v1/tenant_id/stacks/stack_name/resources"
+        uri_regex: "/v1/.+/stacks/.+/resources"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id"
+        uri_regex: "/v1/.+/stacks/.+/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id"
+        uri_regex: "/v1/.+/stacks/.+/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id"
+        uri_regex: "/v1/.+/stacks/.+/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/abondon"
+        uri_regex: "/v1/.+/stacks/.+/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/snapshots"
+        uri_regex: "/v1/.+/stacks/.+/.+/snapshots"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/snapshots"
+        uri_regex: "/v1/.+/stacks/.+/.+/snapshots"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/snapshots/snapshot_id"
+        uri_regex: "/v1/.+/stacks/.+/.+/snapshots/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/snapshots/snapshot_id"
+        uri_regex: "/v1/.+/stacks/.+/.+/snapshots/.+"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/snapshots/snapshot_id/restore"
+        uri_regex: "/v1/.+/stacks/.+/.+/snapshots/.+/restore"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/action_suspend"
+        uri_regex: "/v1/.+/stacks/.+/.+/suspend"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/action_resume"
+        uri_regex: "/v1/.+/stacks/.+/.+/resume"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/action_cancel_update"
+        uri_regex: "/v1/.+/stacks/.+/.+/cancel_update"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/action_check"
+        uri_regex: "/v1/.+/stacks/.+/.+/check"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/resources"
+        uri_regex: "/v1/.+/stacks/.+/.+/resources"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/resources/resource_name"
+        uri_regex: "/v1/.+/stacks/.+/.+/resources/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/resources/resource_name/metadata"
+        uri_regex: "/v1/.+/stacks/.+/.+/resources/.+/metadata"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/resources/resource_name/signal"
+        uri_regex: "/v1/.+/stacks/.+/.+/resources/.+/signal"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/events"
+        uri_regex: "/v1/.+/stacks/.+/events"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/events"
+        uri_regex: "/v1/.+/stacks/.+/.+/events"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/resources/resource_name/events"
+        uri_regex: "/v1/.+/stacks/.+/.+/resources/.+/events"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/stacks/stack_name/stack_id/template"
+        uri_regex: "/v1/.+/stacks/.+/.+/template"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/validate"
+        uri_regex: "/v1/.+/validate"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_configs"
+        uri_regex: "/v1/.+/software_configs"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_configs/config_id"
+        uri_regex: "/v1/.+/software_configs/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_configs/config_id"
+        uri_regex: "/v1/.+/software_configs/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_deployments"
+        uri_regex: "/v1/.+/software_deployments"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_deployments"
+        uri_regex: "/v1/.+/software_deployments"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_deployments/metadata/server_id"
+        uri_regex: "/v1/.+/software_deployments/metadata/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_deployments/deployment_id"
+        uri_regex: "/v1/.+/software_deployments/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_deployments/deployment_id"
+        uri_regex: "/v1/.+/software_deployments/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v1/tenant_id/software_deployments/deployment_id"
+        uri_regex: "/v1/.+/software_deployments/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+    - id: 'unlimited'
+      groups: 'unlimited'
+      default: false
+      limits:
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: 'ALL'
+        unit: 'SECOND'
+        value: '10000'
+  tenant_glance_ctl:
+    - id: 'limited'
+      groups: 'limited'
+      default: true
+      limits:
+      - uri: "/v2/images"
+        uri_regex: "/v2/images"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id"
+        uri_regex: "/v2/images/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '50'
+      - uri: "/v2/images/image_id"
+        uri_regex: "/v2/images/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id"
+        uri_regex: "/v2/images/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/actions/reactivate"
+        uri_regex: "/v2/images/.+/actions/reactivate"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/actions/deactivate"
+        uri_regex: "/v2/images/.+/actions/deactivate"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/file"
+        uri_regex: "/v2/images/.+/file"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/file"
+        uri_regex: "/v2/images/.+/file"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/tags/tagfile"
+        uri_regex: "/v2/images/.+/tags/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/tags/tagfile"
+        uri_regex: "/v2/images/.+/tags/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/members"
+        uri_regex: "/v2/images/.+/members"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/members"
+        uri_regex: "/v2/images/.+/members"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/members/member_id"
+        uri_regex: "/v2/images/.+/members/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/members/member_id"
+        uri_regex: "/v2/images/.+/members/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/images/image_id/members/member_id"
+        uri_regex: "/v2/images/.+/members/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/schema/images"
+        uri_regex: "/v2/schema/images"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/schema/image"
+        uri_regex: "/v2/schema/image"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/schema/members"
+        uri_regex: "/v2/schema/members"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/schema/member"
+        uri_regex: "/v2/schema/member"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs"
+        uri_regex: "/v2/metadefs"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '60'
+      - uri: "/v2/metadefs/namespaces/namespace/resource_types"
+        uri_regex: "/v2/metadefs/namespaces/.+/resource_types"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/resource_types"
+        uri_regex: "/v2/metadefs/namespaces/.+/resource_types"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '60'
+      - uri: "/v2/metadefs/namespaces/namespace/resource_types/name"
+        uri_regex: "/v2/metadefs/namespaces/.+/resource_types/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces"
+        uri_regex: "/v2/metadefs/namespaces"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace"
+        uri_regex: "/v2/metadefs/namespaces/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '60'
+      - uri: "/v2/metadefs/namespaces/namespace"
+        uri_regex: "/v2/metadefs/namespaces/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace"
+        uri_regex: "/v2/metadefs/namespaces/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/properties"
+        uri_regex: "/v2/metadefs/namespaces/.+/properties"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '60'
+      - uri: "/v2/metadefs/namespaces/namespace/properties"
+        uri_regex: "/v2/metadefs/namespaces/.+/properties"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/properties/property_name"
+        uri_regex: "/v2/metadefs/namespaces/.+/properties/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/properties/property_name"
+        uri_regex: "/v2/metadefs/namespaces/.+/properties/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '60'
+      - uri: "/v2/metadefs/namespaces/namespace/properties/property_name"
+        uri_regex: "/v2/metadefs/namespaces/.+/properties/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/objects"
+        uri_regex: "/v2/metadefs/namespaces/.+/objects"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '60'
+      - uri: "/v2/metadefs/namespaces/namespace/objects"
+        uri_regex: "/v2/metadefs/namespaces/.+/objects"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/objects/object_name"
+        uri_regex: "/v2/metadefs/namespaces/.+/objects/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/objects/object_name"
+        uri_regex: "/v2/metadefs/namespaces/.+/objects/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/tags"
+        uri_regex: "/v2/metadefs/namespaces/.+/tags"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/tags"
+        uri_regex: "/v2/metadefs/namespaces/.+/tags"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/tags"
+        uri_regex: "/v2/metadefs/namespaces/.+/tags"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/tags/name"
+        uri_regex: "/v2/metadefs/namespaces/.+/tags/.+"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/tags/name"
+        uri_regex: "/v2/metadefs/namespaces/.+/tags/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/tags/name"
+        uri_regex: "/v2/metadefs/namespaces/.+/tags/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/metadefs/namespaces/namespace/tags/name"
+        uri_regex: "/v2/metadefs/namespaces/.+/tags/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+    - id: 'unlimited'
+      groups: 'unlimited'
+      default: false
+      limits:
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: 'ALL'
+        unit: 'SECOND'
+        value: '10000'
+  tenant_cinder_ctl:
+    - id: 'limited'
+      groups: 'limited'
+      default: true
+      limits:
+      - uri: "/v2"
+        uri_regex: "/v2"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/extensions"
+        uri_regex: "/v2/.+/extensions"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/volumes"
+        uri_regex: "/v2/.+/volumes"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/volumes"
+        uri_regex: "/v2/.+/volumes"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/volumes/detail"
+        uri_regex: "/v2/.+/volumes/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/volumes/volume_id"
+        uri_regex: "/v2/.+/volumes/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/volumes/volume_id/action"
+        uri_regex: "/v2/.+/volumes/.+/action"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/types"
+        uri_regex: "/v2/.+/types"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/types"
+        uri_regex: "/v2/.+/types"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/limits"
+        uri_regex: "/v2/.+/limits"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/snapshots"
+        uri_regex: "/v2/.+/snapshots"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/snapshots"
+        uri_regex: "/v2/.+/snapshots"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/snapshots/detail"
+        uri_regex: "/v2/.+/snapshots/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/snapshots/snapshot_id/metadata"
+        uri_regex: "/v2/.+/snapshots/.+/metadata"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/snapshots/snapshot_id/metadata"
+        uri_regex: "/v2/.+/snapshots/.+/metadata"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-volume-manage"
+        uri_regex: "/v2/.+/os-volume-manage"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/volumes"
+        uri_regex: "/v2/.+/volumes"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: "ALL"
+        unit: "MINUTE"
+        value: '600'
+    - id: 'unlimited'
+      groups: 'unlimited'
+      default: false
+      limits:
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: 'ALL'
+        unit: 'SECOND'
+        value: '10000'
+  tenant_ceilometer_ctl:
+    - id: 'limited'
+      groups: 'limited'
+      default: true
+      limits:
+      - uri: "/v2/resources/id"
+        uri_regex: "/v2/resources/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/resources"
+        uri_regex: "/v2/resources/?"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '10'
+      - uri: "/v2/meters/id"
+        uri_regex: "/v2/meters/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/meters/id/statistics"
+        uri_regex: "/v2/meters/.+/statistics"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '2'
+      - uri: "/v2/meters/id"
+        uri_regex: "/v2/meters/.+"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '2'
+      - uri: "/v2/meters"
+        uri_regex: "/v2/meters/?"
+        http_methods: "GET"
+        unit: 'MINUTE'
+        value: '2'
+      - uri: "/v2/samples/id"
+        uri_regex: "/v2/samples/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/samples"
+        uri_regex: "/v2/samples/?"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '2'
+      - uri: "/v2/alarms/id/history"
+        uri_regex: "/v2/alarms/.+/history"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '2'
+      - uri: "/v2/alarms/id/state"
+        uri_regex: "/v2/alarms/.+/state"
+        http_methods: 'PUT GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/alarms/id"
+        uri_regex: "/v2/alarms/.+"
+        http_methods: 'GET PUT DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/alarms"
+        uri_regex: "/v2/alarms/?"
+        http_methods: 'GET POST'
+        unit: 'MINUTE'
+        value: '2'
+      - uri: '/v2/query'
+        uri_regex: '/v2/query/?.*'
+        http_methods: 'ALL'
+        unit: 'MINUTE'
+        value: '2'
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: 'GET PUT POST DELETE HEAD'
+        unit: 'MINUTE'
+        value: '60'
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: "OPTIONS"
+        unit: "SECOND"
+        value: '20'
+    - id: 'unlimited'
+      groups: 'unlimited'
+      default: false
+      limits:
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: 'ALL'
+        unit: 'SECOND'
+        value: '10000'
+  tenant_neutron_api:
+    - id: 'limited'
+      groups: 'limited'
+      default: true
+      limits:
+      - uri: "/v2"
+        uri_regex: "/v2"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/networks"
+        uri_regex: "/v2/networks"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/networks/"
+        uri_regex: "/v2/networks/.+"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/networks/"
+        uri_regex: "/v2/networks/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/networks/"
+        uri_regex: "/v2/networks/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/subnets"
+        uri_regex: "/v2/subnets"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/subnets"
+        uri_regex: "/v2/subnets"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2.0/subnets/subnet_id"
+        uri_regex: "/v2/subnets/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2.0/subnets/subnet_id"
+        uri_regex: "/v2/subnets/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2.0/subnets/subnet_id"
+        uri_regex: "/v2/subnets/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/ports"
+        uri_regex: "/v2/ports"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/ports"
+        uri_regex: "/v2/ports"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/ports/port_id"
+        uri_regex: "/v2/ports/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/ports/port_id"
+        uri_regex: "/v2/ports/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v2/ports/port_id"
+        uri_regex: "/v2/ports/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+    - id: 'unlimited'
+      groups: 'unlimited'
+      default: false
+      limits:
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: 'ALL'
+        unit: 'SECOND'
+        value: '10000'
+  tenant_nova_ctl:
+    - id: 'limited'
+      groups: 'limited'
+      default: true
+      limits:
+      # v2 is Icehouse and v2.1 is Kilo. Currently, only support v2
+      - uri: "/v2/tenant_id/servers"
+        uri_regex: "/v2/.+/servers"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers"
+        uri_regex: "/v2/.+/servers"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/detail"
+        uri_regex: "/v2/.+/servers/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/detail"
+        uri_regex: "/v2/.+/servers/.+/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id"
+        uri_regex: "/v2/.+/servers/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id"
+        uri_regex: "/v2/.+/servers/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id"
+        uri_regex: "/v2/.+/servers/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/metadata"
+        uri_regex: "/v2/.+/servers/.+/metadata"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/metadata"
+        uri_regex: "/v2/.+/servers/.+/metadata"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/metadata"
+        uri_regex: "/v2/.+/servers/.+/metadata"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/metadata/key"
+        uri_regex: "/v2/.+/servers/.+/metadata/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/metadata/key"
+        uri_regex: "/v2/.+/servers/.+/metadata/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/metadata/key"
+        uri_regex: "/v2/.+/servers/.+/metadata/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/ips"
+        uri_regex: "/v2/.+/servers/.+/ips"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/ips/network_label"
+        uri_regex: "/v2/.+/servers/.+/ips/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/action"
+        uri_regex: "/v2/.+/servers/.+/action"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/action"
+        uri_regex: "/v2/.+/servers/.+/action"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/diagnostics"
+        uri_regex: "/v2/.+/servers/.+/diagnostics"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/flavors"
+        uri_regex: "/v2/.+/flavors"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/flavors"
+        uri_regex: "/v2/.+/flavors"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/os-flavor-access"
+        uri_regex: "/v2/.+/flavors/.+/os-flavor-access"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/action"
+        uri_regex: "/v2/.+/flavors/.+/action"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/action"
+        uri_regex: "/v2/.+/flavors/.+/action"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/os-flavor-swap"
+        uri_regex: "/v2/.+/flavors/.+/os-flavor-swap"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/os-flavor-swap"
+        uri_regex: "/v2/.+/flavors/.+/os-flavor-swap"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/flavors/flavor_id"
+        uri_regex: "/v2/.+/flavors/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/flavors/flavor_id"
+        uri_regex: "/v2/.+/flavors/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/os-extra_specs"
+        uri_regex: "/v2/.+/flavors/.+/os-extra_specs"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/os-extra_specs/key_id"
+        uri_regex: "/v2/.+/flavors/.+/os-extra_specs/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/os-extra_specs/key_id"
+        uri_regex: "/v2/.+/flavors/.+/os-extra_specs/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/os-extra_specs/key_id"
+        uri_regex: "/v2/.+/flavors/.+/os-extra_specs/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/flavors/flavor_id/os-extra_specs"
+        uri_regex: "/v2/.+/flavors/.+/os-extra_specs"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/flavors/detail"
+        uri_regex: "/v2/.+/flavors/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/flavors/flavor_id"
+        uri_regex: "/v2/.+/flavors/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/images"
+        uri_regex: "/v2/.+/images"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/images/detail"
+        uri_regex: "/v2/.+/images/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/images/image_id"
+        uri_regex: "/v2/.+/images/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/images/image_id"
+        uri_regex: "/v2/.+/images/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/images/image_id/metadata"
+        uri_regex: "/v2/.+/images/.+/metadata"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/images/image_id/metadata"
+        uri_regex: "/v2/.+/images/.+/metadata"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/images/image_id/metadata"
+        uri_regex: "/v2/.+/images/.+/metadata"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/images/image_id/metadata/key"
+        uri_regex: "/v2/.+/images/.+/metadata/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/images/image_id/metadata/key"
+        uri_regex: "/v2/.+/images/.+/metadata/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/images/image_id/metadata/key"
+        uri_regex: "/v2/.+/images/.+/metadata/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/limits"
+        uri_regex: "/v2/.+/limits"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/limits/customer_tenant_id"
+        uri_regex: "/v2/.+/limits/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/extensions"
+        uri_regex: "/v2/.+/extensions"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/extensions/alias"
+        uri_regex: "/v2/.+/extensions/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-availability-zone"
+        uri_regex: "/v2/.+/os-availability-zone"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-availability-zone/detail"
+        uri_regex: "/v2/.+/os-availability-zone/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-availability-zone/availability_zone_id"
+        uri_regex: "/v2/.+/os-availability-zone/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-instance-actions"
+        uri_regex: "/v2/.+/servers/.+/os-instance-actions"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-instance-actions/action_id"
+        uri_regex: "/v2/.+/servers/.+/os-instance-actions/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-server-password"
+        uri_regex: "/v2/.+/servers/.+/os-server-password"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-server-password"
+        uri_regex: "/v2/.+/servers/.+/os-server-password"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/os-baremetal-nodes"
+        uri_regex: "/v2/.+/servers/.+/os-baremetal-nodes"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/os-baremetal-nodes"
+        uri_regex: "/v2/.+/servers/.+/os-baremetal-nodes"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-baremetal-nodes/action"
+        uri_regex: "/v2/.+/servers/.+/os-baremetal-nodes/action"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/os-baremetal-nodes/node_id"
+        uri_regex: "/v2/.+/servers/.+/os-baremetal-nodes/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-virtual-interfaces"
+        uri_regex: "/v2/.+/servers/.+/os-virtual-interfaces"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-volume_attachments"
+        uri_regex: "/v2/.+/servers/.+/os-volume_attachments"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/os-volume_attachments"
+        uri_regex: "/v2/.+/servers/.+/os-volume_attachments"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-volume_attachments/attachment_id"
+        uri_regex: "/v2/.+/servers/.+/os-volume_attachments/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-volume_attachments/attachment_id"
+        uri_regex: "/v2/.+/servers/.+/os-volume_attachments/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/os-interface"
+        uri_regex: "/v2/.+/servers/.+/os-interface"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/servers/server_id/os-interface"
+        uri_regex: "/v2/.+/servers/.+/os-interface"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-interface/attachment_id"
+        uri_regex: "/v2/.+/servers/.+/os-interface/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-interface/attachment_id"
+        uri_regex: "/v2/.+/servers/.+/os-interface/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-volumes_boot"
+        uri_regex: "/v2/.+/os-volumes_boot"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-agents"
+        uri_regex: "/v2/.+/os-agents"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-agents"
+        uri_regex: "/v2/.+/os-agents"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-agents"
+        uri_regex: "/v2/.+/os-agents"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-agents/id"
+        uri_regex: "/v2/.+/os-agents/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-aggregates"
+        uri_regex: "/v2/.+/os-aggregates"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-aggregates"
+        uri_regex: "/v2/.+/os-aggregates"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-aggregates/aggregate_id"
+        uri_regex: "/v2/.+/os-aggregates/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-aggregates/aggregate_id"
+        uri_regex: "/v2/.+/os-aggregates/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-aggregates/aggregate_id"
+        uri_regex: "/v2/.+/os-aggregates/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-aggregates/aggregate_id/action"
+        uri_regex: "/v2/.+/os-aggregates/.+/action"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-certificates"
+        uri_regex: "/v2/.+/os-certificates"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-certificates"
+        uri_regex: "/v2/.+/os-certificates"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-cloudpipe"
+        uri_regex: "/v2/.+/os-cloudpipe"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-cloudpipe"
+        uri_regex: "/v2/.+/os-cloudpipe"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-cloudpipe/configure-project"
+        uri_regex: "/v2/.+/os-cloudpipe/configure-project"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-coverage/action"
+        uri_regex: "/v2/.+/os-coverage/action"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id"
+        uri_regex: "/v2/[^/]+"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-extended-networks"
+        uri_regex: "/v2/.+/os-extended-networks"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-extended-networks/id"
+        uri_regex: "/v2/.+/os-extended-networks/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-fixed-ips/fixed_ip"
+        uri_regex: "/v2/.+/os-fixed-ips/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-fixed-ips/fixed_ip/action"
+        uri_regex: "/v2/.+/os-fixed-ips/.+/action"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-floating-ip-dns"
+        uri_regex: "/v2/.+/os-floating-ip-dns"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-floating-ip-dns/domain"
+        uri_regex: "/v2/.+/os-floating-ip-dns/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-floating-ip-dns/domain"
+        uri_regex: "/v2/.+/os-floating-ip-dns/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-floating-ip-dns/domain/entries/name"
+        uri_regex: "/v2/.+/os-floating-ip-dns/.+/entries/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-floating-ip-dns/domain/entries/name"
+        uri_regex: "/v2/.+/os-floating-ip-dns/.+/entries/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-floating-ip-dns/domain/entries/name"
+        uri_regex: "/v2/.+/os-floating-ip-dns/.+/entries/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-floating-ip-pools"
+        uri_regex: "/v2/.+/os-floating-ip-pools"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-floating-ips"
+        uri_regex: "/v2/.+/os-floating-ips"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-floating-ips"
+        uri_regex: "/v2/.+/os-floating-ips"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-floating-ips/id"
+        uri_regex: "/v2/.+/os-floating-ips/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-floating-ips/id"
+        uri_regex: "/v2/.+/os-floating-ips/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-floating-ips-bulk"
+        uri_regex: "/v2/.+/os-floating-ips-bulk"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-floating-ips-bulk"
+        uri_regex: "/v2/.+/os-floating-ips-bulk"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-floating-ips-bulk/delete"
+        uri_regex: "/v2/.+/os-floating-ips-bulk/delete"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-floating-ips-bulk/host_name"
+        uri_regex: "/v2/.+/os-floating-ips-bulk/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hosts"
+        uri_regex: "/v2/.+/os-hosts"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hosts/host_name"
+        uri_regex: "/v2/.+/os-hosts/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hosts/host_name"
+        uri_regex: "/v2/.+/os-hosts/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-hosts/host_name/startup"
+        uri_regex: "/v2/.+/os-hosts/.+/startup"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hosts/host_name/shutdown"
+        uri_regex: "/v2/.+/os-hosts/.+/shutdown"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hosts/host_name/reboot"
+        uri_regex: "/v2/.+/os-hosts/.+/reboot"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hypervisors"
+        uri_regex: "/v2/.+/os-hypervisors"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hypervisors/detail"
+        uri_regex: "/v2/.+/os-hypervisors/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hypervisors/statistics"
+        uri_regex: "/v2/.+/os-hypervisors/statistics"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hypervisors/hypervisor_hostname"
+        uri_regex: "/v2/.+/os-hypervisors/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hypervisors/hypervisor_hostname/servers"
+        uri_regex: "/v2/.+/os-hypervisors/.+/servers"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-hypervisor-status/detail"
+        uri_regex: "/v2/.+/os-hypervisor-status/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-keypairs"
+        uri_regex: "/v2/.+/os-keypairs"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-keypairs"
+        uri_regex: "/v2/.+/os-keypairs"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-keypair/keypair_name"
+        uri_regex: "/v2/.+/os-keypairs/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-keypair/keypair_name"
+        uri_regex: "/v2/.+/os-keypairs/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-migrations"
+        uri_regex: "/v2/.+/os-migrations"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-networks"
+        uri_regex: "/v2/.+/os-networks"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-networks/add"
+        uri_regex: "/v2/.+/os-networks/add"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-networks/id"
+        uri_regex: "/v2/.+/os-networks/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-networks/id"
+        uri_regex: "/v2/.+/os-networks/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-networks/id/action"
+        uri_regex: "/v2/.+/os-networks/.+/action"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/os-quota-class-sets/class_id"
+        uri_regex: "/v2/os-quota-class-sets/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/os-quota-class-sets/class_id"
+        uri_regex: "/v2/os-quota-class-sets/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-quota-class-sets/tenant_id"
+        uri_regex: "/v2/.+/os-quota-class-sets/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-quota-class-sets/tenant_id"
+        uri_regex: "/v2/.+/os-quota-class-sets/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-quota-class-sets/tenant_id"
+        uri_regex: "/v2/.+/os-quota-class-sets/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-quota-class-sets/tenant_id/defaults"
+        uri_regex: "/v2/.+/os-quota-class-sets/.+/defaults"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-quota-class-sets/tenant_id/user_id"
+        uri_regex: "/v2/.+/os-quota-class-sets/.+/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-quota-class-sets/tenant_id/user_id"
+        uri_regex: "/v2/.+/os-quota-class-sets/.+/.+"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-quota-class-sets/tenant_id/user_id"
+        uri_regex: "/v2/.+/os-quota-class-sets/.+/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-quota-class-sets/tenant_id/detail/user_id"
+        uri_regex: "/v2/.+/os-quota-class-sets/.+/detail/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-security-groups"
+        uri_regex: "/v2/.+/os-security-groups"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/servers/server_id/os-security-groups"
+        uri_regex: "/v2/.+/servers/.+/os-security-groups"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-security-groups"
+        uri_regex: "/v2/.+/os-security-groups"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-security-groups/security_group_id"
+        uri_regex: "/v2/.+/os-security-groups/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-security-groups/security_group_id"
+        uri_regex: "/v2/.+/os-security-groups/.+"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-security-groups/security_group_id"
+        uri_regex: "/v2/.+/os-security-groups/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-security-group-rules"
+        uri_regex: "/v2/.+/os-security-group-rules"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-security-group-rules"
+        uri_regex: "/v2/.+/os-security-group-rules"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-security-group-default-rules"
+        uri_regex: "/v2/.+/os-security-group-default-rules"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-security-group-default-rules"
+        uri_regex: "/v2/.+/os-security-group-default-rules"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-security-group-default-rules/security_group_default_rule_id"
+        uri_regex: "/v2/.+/os-security-group-default-rules/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-security-group-default-rules/security_group_default_rule_id"
+        uri_regex: "/v2/.+/os-security-group-default-rules/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-server-groups"
+        uri_regex: "/v2/.+/os-server-groups"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-server-groups"
+        uri_regex: "/v2/.+/os-server-groups"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-server-groups/ServerGroup_id"
+        uri_regex: "/v2/.+/os-server-groups/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-server-groups/ServerGroup_id"
+        uri_regex: "/v2/.+/os-server-groups/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-services"
+        uri_regex: "/v2/.+/os-services"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-services/enable"
+        uri_regex: "/v2/.+/os-services/enable"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-services/disable"
+        uri_regex: "/v2/.+/os-services/disable"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-services/disable-log-reason"
+        uri_regex: "/v2/.+/os-services/disable-log-reason"
+        http_methods: 'PUT'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-services/detail"
+        uri_regex: "/v2/.+/os-services/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-services/service_id"
+        uri_regex: "/v2/.+/os-services/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-simple-tenant-usage"
+        uri_regex: "/v2/.+/os-simple-tenant-usage"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-simple-tenant-usage/tenant_id"
+        uri_regex: "/v2/.+/os-simple-tenant-usage/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-volumes"
+        uri_regex: "/v2/.+/os-volumes"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-volumes"
+        uri_regex: "/v2/.+/os-volumes"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-volumes/detail"
+        uri_regex: "/v2/.+/os-volumes/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-volumes/volume_id"
+        uri_regex: "/v2/.+/os-volumes/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-volumes/volume_id"
+        uri_regex: "/v2/.+/os-volumes/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-volume-types"
+        uri_regex: "/v2/.+/os-volume-types"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-volume-types/volume_type_id"
+        uri_regex: "/v2/.+/os-volume-types/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-snapshots"
+        uri_regex: "/v2/.+/os-snapshots"
+        http_methods: 'POST'
+        unit: 'MINUTE'
+        value: '500'
+      - uri: "/v2/tenant_id/os-snapshots"
+        uri_regex: "/v2/.+/os-snapshots"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-snapshots/detail"
+        uri_regex: "/v2/.+/os-snapshots/detail"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-snapshots/snapshot_id"
+        uri_regex: "/v2/.+/os-snapshots/.+"
+        http_methods: 'GET'
+        unit: 'MINUTE'
+        value: '1500'
+      - uri: "/v2/tenant_id/os-snapshots/snapshot_id"
+        uri_regex: "/v2/.+/os-snapshots/.+"
+        http_methods: 'DELETE'
+        unit: 'MINUTE'
+        value: '500'
+    - id: 'unlimited'
+      groups: 'unlimited'
+      default: false
+      limits:
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: 'ALL'
+        unit: 'SECOND'
+        value: '10000'
+  tenant_keystone_ctl:
+    - id: 'standard-ip-limits'
+      groups: 'IP_Standard'
+      default: true
+      limits:
+      # rate limiting on identity API v2
+      - uri: "/v2.0/tokens"
+        uri_regex: "/v2.0/tokens/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '20'
+      - uri: "/v2.0/tenants"
+        uri_regex: "/v2.0/tenants/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '20'
+      - uri: "/v2.0"
+        uri_regex: "/v2.0/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '20'
+      - uri: "/"
+        uri_regex: "/"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '20'
+      # rate limiting on identity API v3
+      - uri: "/v3"
+        uri_regex: "/v3/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- tokens
+      - uri: "/v3/auth/tokens"
+        uri_regex: "/v3/auth/tokens/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/auth/tokens"
+        uri_regex: "/v3/auth/tokens/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/auth/tokens"
+        uri_regex: "/v3/auth/tokens/?"
+        http_methods: 'HEAD'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/auth/tokens"
+        uri_regex: "/v3/auth/tokens/?"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- service catalog
+      - uri: "/v3/services"
+        uri_regex: "/v3/services/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/services"
+        uri_regex: "/v3/services/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/services/service_id"
+        uri_regex: "/v3/services/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/services/service_id"
+        uri_regex: "/v3/services/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/services/service_id"
+        uri_regex: "/v3/services/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- endpoints
+      - uri: "/v3/endpoints"
+        uri_regex: "/v3/endpoints/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/endpoints"
+        uri_regex: "/v3/endpoints/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/endpoints/endpoint_id"
+        uri_regex: "/v3/endpoints/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/endpoints/endpoint_id"
+        uri_regex: "/v3/endpoints/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- domains
+      - uri: "/v3/domains"
+        uri_regex: "/v3/domains/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains"
+        uri_regex: "/v3/domains/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id"
+        uri_regex: "/v3/domains/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id"
+        uri_regex: "/v3/domains/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id"
+        uri_regex: "/v3/domains/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id/users/user_id/roles"
+        uri_regex: "/v3/domains/.+/users/.+/roles/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id/users/user_id/roles/role_id"
+        uri_regex: "/v3/domains/.+/users/.+/roles/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id/users/user_id/roles/role_id"
+        uri_regex: "/v3/domains/.+/users/.+/roles/.+"
+        http_methods: 'HEAD'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id/users/user_id/roles/role_id"
+        uri_regex: "/v3/domains/.+/users/.+/roles/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id/groups/group_id/roles"
+        uri_regex: "/v3/domains/.+/groups/.+/roles"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id/groups/group_id/roles/role_id"
+        uri_regex: "/v3/domains/.+/groups/.+/roles/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id/groups/group_id/roles/role_id"
+        uri_regex: "/v3/domains/.+/groups/.+/roles/.+"
+        http_methods: 'HEAD'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/domains/domain_id/groups/group_id/roles/role_id"
+        uri_regex: "/v3/domains/.+/groups/.+/roles/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- projects
+      - uri: "/v3/projects"
+        uri_regex: "/v3/projects/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects"
+        uri_regex: "/v3/projects/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id"
+        uri_regex: "/v3/projects/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id"
+        uri_regex: "/v3/projects/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id"
+        uri_regex: "/v3/projects/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id/users/user_id/roles"
+        uri_regex: "/v3/projects/.+/users/.+/roles"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id/users/user_id/roles/role_id"
+        uri_regex: "/v3/projects/.+/users/.+/roles/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id/users/user_id/roles/role_id"
+        uri_regex: "/v3/projects/.+/users/.+/roles/.+"
+        http_methods: 'HEAD'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id/users/user_id/roles/role_id"
+        uri_regex: "/v3/projects/.+/users/.+/roles/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id/groups/group_id/roles"
+        uri_regex: "/v3/projects/.+/groups/.+/roles"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id/groups/group_id/roles/role_id"
+        uri_regex: "/v3/projects/.+/groups/.+/roles/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id/groups/group_id/roles/role_id"
+        uri_regex: "/v3/projects/.+/groups/.+/roles/.+"
+        http_methods: 'HEAD'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/projects/project_id/groups/group_id/roles/role_id"
+        uri_regex: "/v3/projects/.+/groups/.+/roles/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- users
+      - uri: "/v3/users"
+        uri_regex: "/v3/users/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/users"
+        uri_regex: "/v3/users/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/users/user_id"
+        uri_regex: "/v3/users/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/users/user_id"
+        uri_regex: "/v3/users/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/users/user_id"
+        uri_regex: "/v3/users/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/users/user_id/groups"
+        uri_regex: "/v3/users/.+/groups/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/users/user_id/projects"
+        uri_regex: "/v3/users/.+/projects/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- groups
+      - uri: "/v3/groups"
+        uri_regex: "/v3/groups/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/groups"
+        uri_regex: "/v3/groups/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/groups/group_id"
+        uri_regex: "/v3/groups/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/groups/group_id"
+        uri_regex: "/v3/groups/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/groups/group_id"
+        uri_regex: "/v3/groups/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/groups/group_id/users"
+        uri_regex: "/v3/groups/.+/users"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/groups/group_id/users/user_id"
+        uri_regex: "/v3/groups/.+/users/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/groups/group_id/users/user_id"
+        uri_regex: "/v3/groups/.+/users/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/groups/group_id/users/user_id"
+        uri_regex: "/v3/groups/.+/users/.+"
+        http_methods: 'HEAD'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- credentials
+      - uri: "/v3/credentials"
+        uri_regex: "/v3/credentials/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/credentials"
+        uri_regex: "/v3/credentials/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/credentials/credential_id"
+        uri_regex: "/v3/credentials/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/credentials/credential_id"
+        uri_regex: "/v3/credentials/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/credentials/credential_id"
+        uri_regex: "/v3/credentials/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- roles
+      - uri: "/v3/roles"
+        uri_regex: "/v3/roles/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/roles"
+        uri_regex: "/v3/roles/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/role_assignments"
+        uri_regex: "/v3/role_assignments/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/roles/role_id"
+        uri_regex: "/v3/roles/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- policies
+      - uri: "/v3/policies"
+        uri_regex: "/v3/policies/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/policies"
+        uri_regex: "/v3/policies/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/policies/policy_id"
+        uri_regex: "/v3/policies/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/policies/policy_id"
+        uri_regex: "/v3/policies/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/policies/policy_id"
+        uri_regex: "/v3/policies/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+      # rate limiting on identity API v3 --- regions
+      - uri: "/v3/regions"
+        uri_regex: "/v3/regions/?"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/regions"
+        uri_regex: "/v3/regions/?"
+        http_methods: 'POST'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/regions/user_defined_region_id"
+        uri_regex: "/v3/regions/.+"
+        http_methods: 'PUT'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/regions/region_id"
+        uri_regex: "/v3/regions/.+"
+        http_methods: 'GET'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/regions/region_id"
+        uri_regex: "/v3/regions/.+"
+        http_methods: 'PATCH'
+        unit: 'SECOND'
+        value: '5'
+      - uri: "/v3/regions/region_id"
+        uri_regex: "/v3/regions/.+"
+        http_methods: 'DELETE'
+        unit: 'SECOND'
+        value: '5'
+    - id: 'super-user-limits'
+      groups: 'IP_Super'
+      default: false
+      limits:
+      - uri: '.*'
+        uri_regex: '/.*'
+        http_methods: 'ALL'
+        unit: 'SECOND'
+        value: '10000'

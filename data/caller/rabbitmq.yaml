@@ -1,0 +1,6 @@
+---
+# rabbitmq::server
+rabbitmq::server::config_cluster: true
+rabbitmq::server::wipe_db_on_cookie_change: true
+rabbitmq::server::config: 'ccs/rabbitmq.config.erb'
+rabbitmq::server::env_config: 'ccs/rabbitmq-env.conf.erb'

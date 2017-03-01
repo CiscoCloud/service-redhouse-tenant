@@ -1,0 +1,4 @@
+---
+ovs_bond: true
+neutron::agents::ml2::ovs::bridge_uplinks: []
+bond: true

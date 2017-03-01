@@ -1,0 +1,60 @@
+---
+# keystone
+keystone::enabled: false
+keystone::enable_ssl: false
+keystone::sql_connection: "mysql://keystone:%{hiera('keystone::db::mysql::password')}@%{hiera('mysql_vip')}/keystone"
+keystone::token_format: UUID
+keystone::token_driver: keystone.token.backends.sql.Token
+keystone::token_expiration: 21600
+keystone::mysql_module: 2.3
+keystone::rabbit_userid: "%{hiera('rpc_user')}"
+keystone::rabbit_password: "%{hiera('rpc_password')}"
+keystone::idle_timeout: 30
+keystone::log_facility: LOG_USER
+keystone::package_ensure: present
+keystone::public_endpoint: "%{hiera('controller_public_protocol')}://%{hiera('controller_public_address')}:5000"
+keystone::use_syslog: false
+keystone::verbose: true
+
+# keystone::db::mysql
+keystone::db::mysql::mysql_module: 2.3
+keystone::db::mysql::charset: "%{hiera('mysql_default_charset')}"
+keystone::db::mysql::collate: "%{hiera('mysql_default_collation')}"
+keystone::db::mysql::allowed_hosts: "%{hiera('allowed_hosts')}"
+keystone::db::mysql::host: "%{hiera('localhost')}"
+
+# keystone::wsgi
+keystone::wsgi::apache: "%{hiera('controller_public_url')}"
+
+# keystone::wsgi::apache
+keystone::wsgi::apache::ssl: false
+keystone::wsgi::apache::workers: "%{::processorcount}"
+keystone::wsgi::apache::bind_host: 0.0.0.0
+
+# keystone::config
+# See caller/ccs.yaml
+
+# keystone::service
+keystone::service::validate: true
+keystone::service::admin_endpoint: 'http://localhost:35357/v2.0'
+
+# keystone::roles::admin
+keystone::roles::admin::admin_tenant: "%{hiera('admin_tenant')}"
+keystone::roles::admin::password: "%{hiera('admin_password')}"
+keystone::roles::admin::admin_tenant: "%{hiera('admin_tenant')}"
+keystone::roles::admin::email: "%{hiera('admin_email')}"
+keystone::roles::admin::password: "%{hiera('admin_password')}"
+keystone::roles::admin::service_tenant: "%{hiera('service_tenant')}"
+
+keystone::admin_endpoint: "http://%{hiera('controller_admin_address')}:35357/v2.0"
+keystone::bind_host: "%{hiera('bind_address')}"
+keystone::debug: false
+
+# keystone::endpoint
+keystone::endpoint::admin_url: "%{hiera('controller_admin_url')}"
+keystone::endpoint::internal_url: "%{hiera('controller_internal_url')}"
+keystone::endpoint::public_url: "%{hiera('controller_public_url')}"
+keystone::endpoint::region: "%{hiera('region')}"
+
+# keystone::ldap
+keystone::ldap::page_size: 1000

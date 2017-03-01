@@ -1,0 +1,15 @@
+---
+# horizon
+horizon::keystone_url: "%{hiera('controller_public_url')}/v2.0/"
+horizon::bind_address: "%{hiera('bind_address')}"
+horizon::cache_server_ip: "%{hiera('bind_address')}"
+horizon::django_debug: true
+horizon::keystone_url: "http://%{hiera('controller_internal_address')}:5000/v2.0/"
+horizon::neutron_options:
+  'enable_lb': true
+  'enable_firewall': true
+  'enable_vpn': false
+
+# horizon::wsgi
+horizon::wsgi::apache::apache_apl: true
+horizon::wsgi::apache::priority: 10

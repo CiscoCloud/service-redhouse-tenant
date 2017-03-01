@@ -1,0 +1,13 @@
+---
+:backends:
+  - yaml
+:hierarchy:
+  - "hostname/%{fqdn}"
+  - "hostname/%{hostname}"
+  - site
+  - "role/%{::role}"
+  - "caller/%{calling_class}"
+  - "caller/%{calling_module}"
+  - common
+:yaml:
+   :datadir: ../data

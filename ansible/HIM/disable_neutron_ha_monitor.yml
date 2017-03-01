@@ -1,0 +1,10 @@
+---
+- hosts: "~(.*)neutronapi-001"
+  name: "DISABLE neutron-ha-tool.py cron job on neutronapi-001"
+  gather_facts: no
+  tasks:
+    - stat: path=/etc/cron.d/neutron_ha_tool
+      register: cron_job
+    - shell: mv -f /etc/cron.d/neutron_ha_tool /tmp/neutron_ha_tool
+      when: cron_job.stat.exists
+  tags: [ 'reboot', 'tagged', 'neutron_cron' ]

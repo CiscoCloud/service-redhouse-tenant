@@ -1,0 +1,6 @@
+---
+classes:
+  - ccs::base
+  - ccs::cinder_api
+  - ccs::cinder_volume
+  - ccs::repose

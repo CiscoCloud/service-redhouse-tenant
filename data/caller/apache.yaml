@@ -1,0 +1,5 @@
+---
+# apache
+apache::default_vhost: false
+apache::mpm_module: prefork
+apache::mod::prefork::maxrequestsperchild: '200'

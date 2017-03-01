@@ -1,0 +1,6 @@
+---
+classes:
+  - ccs::base
+  - ccs::keystone
+  - ccs::repose
+ccs::repose::openstack_identity_v3::suppress_lookup: true

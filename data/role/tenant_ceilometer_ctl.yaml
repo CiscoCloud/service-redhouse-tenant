@@ -1,0 +1,5 @@
+---
+classes:
+  - ccs::base
+  - ccs::ceilometer_api
+  - ccs::repose

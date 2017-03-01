@@ -1,0 +1,9 @@
+- name: "OSP1CIS-65: OpenSSL Security Advisory CVE-2016-0800"
+  hosts: redhouse-tenant
+  tags: OSP1CIS-65
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: openssl, grep: openssl-1.0.1e-42.el7_1.10.x86_64 }
+         - { name: openssl-libs, grep: openssl-libs-1.0.1e-42.el7_1.10.x86_64 }

@@ -1,0 +1,14 @@
+---
+- hosts: tenant_horizon
+  name: Updating Horizon cluster
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - name: Set owner to apache on /var/log/httpd/ recursively
+      file: path="/var/log/httpd/" owner=apache group=apache recurse=yes state=directory
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml

@@ -1,0 +1,12 @@
+---
+- shell: date +%F_%T
+  register: bk_time
+  changed_when: False
+
+- stat: path=/usr/lib/python2.7/site-packages/requests-2.6.0-py2.7.egg-info
+  register: requests_info
+
+- name: "Fix deployment issue with python-requests-2.6.0"
+  shell: mv -f /usr/lib/python2.7/site-packages/requests-2.6.0-py2.7.egg-info
+         /usr/lib/python2.7/site-packages/requests-2.6.0-py2.7.egg-info.{{ bk_time.stdout }}
+  when: (requests_info.stat.exists == True and requests_info.stat.isdir == True)

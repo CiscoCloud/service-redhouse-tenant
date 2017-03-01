@@ -1,0 +1,132 @@
+- name: check keepalived state
+  command: systemctl is-active keepalived.service
+  changed_when: false
+  when: role == "tenant_proxy_internal" or role == "tenant_proxy_external"
+
+- name: check rabbitmq cluster state
+  command: rabbitmqctl cluster_status
+  changed_when: false
+  when: role == "tenant_rabbitmq"
+
+- name: check percona state
+  command: mysql -e "SELECT VARIABLE_VALUE FROM information_schema.GLOBAL_STATUS WHERE VARIABLE_NAME = 'wsrep_local_state_comment';"
+  register: cluster_state
+  changed_when: false
+  failed_when:
+    - "'Synced' not in cluster_state.stdout"
+  when: role == "tenant_percona"
+
+- name: check keystone endpoints
+  local_action: command keystone endpoint-list
+  register: keystone_endpoints
+  changed_when: false
+  when: role == "tenant_keystone_ctl"
+  failed_when:
+    - "'http' not in keystone_endpoints.stdout"
+
+- name: check glance-api.service state
+  command: systemctl is-active openstack-glance-api.service
+  changed_when: false
+  when: role == "tenant_glance_ctl"
+
+- name: check cinder service state
+  command: systemctl is-active openstack-cinder-api.service openstack-cinder-scheduler.service openstack-cinder-volume.service
+  register: cinder_service
+  changed_when: false
+  when: role == "tenant_cinder_ctl"
+  failed_when:
+    - "'inactive' in cinder_service.stdout"
+
+- name: check cinder services
+  local_action: command cinder service-list
+  register: cinder_service
+  changed_when: false
+  when: role == "tenant_cinder_ctl"
+  failed_when:
+    - "'volume' not in cinder_service.stdout"
+
+- name: check heat-api.service state
+  command: systemctl is-active openstack-heat-api.service
+  changed_when: false
+  when: role == "tenant_heat_ctl"
+
+- name: check novactl services state
+  command: systemctl is-active openstack-nova-cert.service openstack-nova-conductor.service openstack-nova-consoleauth.service
+  register: nova_service
+  changed_when: false
+  when: role == 'tenant_nova_ctl'
+  failed_when:
+    - "'inactive' in nova_service.stdout"
+
+- name: check nova api services state
+  command: systemctl is-active httpd.service openstack-nova-api.service
+  register: nova_service
+  changed_when: false
+  when: role == "tenant_nova_ctl"
+  failed_when:
+    - "'active' not in nova_service.stdout"
+
+- name: check nova controllers
+  local_action: "shell nova service-list |grep {{ inventory_hostname_short }}"
+  register: nova_services
+  changed_when: false
+  when: role == "tenant_nova_ctl"
+  failed_when:
+    - "'nova-conductor' not in nova_services.stdout"
+    - "'nova-scheduler' not in nova_services.stdout"
+    - "'nova-cert' not in nova_services.stdout"
+    - "'nova-consoleauth' not in nova_services.stdout"
+
+- name: check neutron.service state
+  command: systemctl is-active neutron-server.service
+  changed_when: false
+  when: role == "tenant_neutron_api"
+
+- name: check network agents
+  command: ovs-vsctl show
+  register: ovs_config
+  when: role == "tenant_network_agents"
+  changed_when: false
+  failed_when:
+    - "'br-int' not in ovs_config.stdout"
+    - "'br-ext' not in ovs_config.stdout"
+
+- name: check nova-compute.service state
+  command: systemctl is-active openstack-nova-compute.service
+  changed_when: false
+  when:
+    - role == "tenant_compute_rbd" or role == "tenant_compute_local" or role == "tenant_compute_bigdata"
+
+- name: check nova compute
+  local_action: command nova service-list --host {{ hostname }}
+  register: nova_services
+  when:
+    - role == "tenant_compute_rbd" or role == "tenant_compute_local" or role == "tenant_compute_bigdata"
+  changed_when: false
+  failed_when:
+    - "'nova-compute' not in nova_services.stdout"
+
+- name: check ceilometer service state
+  command: systemctl is-active {{ item }}
+  register: ceilometer_services
+  changed_when: false
+  with_items:
+    - openstack-ceilometer-api.service
+    - openstack-ceilometer-alarm-evaluator.service
+    - openstack-ceilometer-alarm-notifier.service
+    - openstack-ceilometer-collector.service
+    - openstack-ceilometer-notification.service
+    - openstack-ceilometer-central.service
+  when: role == "tenant_ceilometer_ctl"
+  failed_when:
+    - "'active' not in ceilometer_services.stdout"
+
+# Latest python-ceilometerclient is not available on build server so, we use curl as a workaround
+- name: check ceilometer endpoints with roundrobin haproxy
+  local_action: "shell curl \"$(keystone catalog --service metering | awk '/internalURL/{print $4}')/v2/capabilities\" -H \"X-Auth-Token: $(keystone token-get | awk '/ id/{print $4}')\""
+  register: ceilometer_endpoints
+  changed_when: false
+  with_sequence: count=3
+  when: role == "tenant_ceilometer_ctl"
+  failed_when:
+    - "'api' not in ceilometer_endpoints.stdout"

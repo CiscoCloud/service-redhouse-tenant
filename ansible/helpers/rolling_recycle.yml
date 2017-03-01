@@ -1,0 +1,17 @@
+#####
+#
+# Usage: ansible-playbook ./rolling_recycle.yml -e "target_hosts=<group> unit=<subsystem>"
+# eg:    ansible-playbook ./rolling_recycle.yml -e "target_hosts=tenant_nova_ctl unit=openstack-nova-api.service"
+#
+####
+- hosts: "{{ target_hosts }}"
+  serial: 1
+  tasks:
+  - name: restart systemctl unit
+    command: systemctl restart  {{ unit }}
+  - name: check systemctl unit state
+    command: systemctl is-active {{ unit }}
+    register: service_active
+    changed_when: false
+    failed_when:
+      - "'inactive' in service_active.stdout"

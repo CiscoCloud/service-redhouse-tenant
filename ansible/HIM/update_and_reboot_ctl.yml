@@ -1,0 +1,127 @@
+---
+- include: disable_neutron_ha_monitor.yml
+
+- include: OSP1CIS-290.yml
+
+- hosts: tenant_proxy
+  name: "Update proxies"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+    - include: haproxy-modload.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_proxy_internal
+  name: "Update internal proxies"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_proxy_external
+  name: "Update external proxies"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_keystone_ctl
+  name: "Update keystone"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_neutron_api
+  name: "Update neutron API"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_nova_ctl
+  name: "Update nova API"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_glance_ctl
+  name: "Update glance"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_cinder_ctl
+  name: "Update cinder"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_heat_ctl
+  name: "Update heat"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: tenant_ceilometer_ctl
+  name: "Update ceilometer"
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- include: enable_neutron_ha_monitor.yml

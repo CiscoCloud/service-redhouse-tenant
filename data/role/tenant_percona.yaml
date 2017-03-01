@@ -1,0 +1,4 @@
+---
+classes:
+  - ccs::base
+  - ccs::galera

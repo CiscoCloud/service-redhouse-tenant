@@ -1,0 +1,167 @@
+---
+# neutron
+neutron::allow_overlapping_ips: true
+neutron::core_plugin: 'neutron.plugins.ml2.plugin.Ml2Plugin'
+neutron::dhcp_agents_per_network: 2
+neutron::rpc_backend: 'neutron.openstack.common.rpc.impl_kombu'
+neutron::service_plugins:
+  - 'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
+  - 'neutron.services.loadbalancer.plugin.LoadBalancerPlugin'
+  - 'neutron.services.firewall.fwaas_plugin.FirewallPlugin'
+  - 'neutron.services.metering.metering_plugin.MeteringPlugin'
+neutron::bind_host: "%{hiera('bind_address')}"
+neutron::debug: false
+neutron::log_facility: LOG_USER
+neutron::rabbit_password: "%{hiera('rpc_password')}"
+neutron::rabbit_user: "%{hiera('rpc_user')}"
+neutron::use_syslog: false
+neutron::verbose: true
+neutron::notification_enabled: true
+
+# neutron::db::mysql
+neutron::db::mysql::mysql_module: 2.3
+neutron::db::mysql::charset: "%{hiera('mysql_default_charset')}"
+neutron::db::mysql::collate: "%{hiera('mysql_default_collation')}"
+neutron::db::mysql::allowed_hosts: "%{hiera('allowed_hosts')}"
+neutron::db::mysql::host: "%{hiera('localhost')}"
+
+# neutron::quota
+neutron::quota::quota_firewall: 1
+neutron::quota::quota_firewall_policy: 1
+neutron::quota::quota_firewall_rule: 1
+neutron::quota::quota_floatingip: 3
+neutron::quota::quota_network: 3
+neutron::quota::quota_port: -1
+neutron::quota::quota_router: 1
+neutron::quota::quota_security_group: 20
+neutron::quota::quota_security_group_rule: 100
+neutron::quota::quota_subnet: 5
+
+# neutron::server::notifications
+neutron::server::notifications::nova_url: "http://%{hiera('controller_internal_address')}:8774/v2"
+neutron::server::notifications::nova_admin_auth_url: "%{hiera('controller_admin_url')}/v2.0/"
+neutron::server::notifications::nova_admin_password: "%{hiera('nova_service_password')}"
+neutron::server::notifications::nova_region_name: "%{hiera('region')}"
+neutron::server::notifications::notify_nova_on_port_status_changes: true
+neutron::server::notifications::notify_nova_on_port_data_changes: true
+neutron::server::notifications::send_events_interval: 2
+neutron::server::notifications::nova_admin_auth_url: "%{hiera('controller_admin_url')}/v2.0/"
+neutron::server::notifications::nova_admin_password: "%{hiera('nova_service_password')}"
+neutron::server::notifications::nova_admin_tenant_name: "%{hiera('service_tenant')}"
+neutron::server::notifications::nova_admin_username: "%{hiera('nova_admin_username')}"
+neutron::server::notifications::nova_region_name: "%{hiera('region')}"
+
+# neutron::config
+neutron::config::server_config:
+  'DEFAULT/notification_driver':
+    value: 'neutron.openstack.common.notifier.rpc_notifier'
+  'DEFAULT/notification_topics':
+    value: 'notifications,cc_neutron'
+  'DEFAULT/default_notification_level':
+    value: 'INFO'
+  'DEFAULT/state_path':
+    value: '/var/lib/neutron'
+  'DEFAULT/lock_path':
+    value: '/var/lib/neutron/lock'
+  'DEFAULT/api_paste_config':
+    value: '/etc/neutron/api-paste.ini'
+  'DEFAULT/max_fixed_ips_per_port':
+    value: '10'
+  'DEFAULT/force_gateway_on_subnet':
+    value: 'True'
+  'DEFAULT/rpc_thread_pool_size':
+    value: '2048'
+  'DEFAULT/rpc_conn_pool_size':
+    value: '60'
+  'DEFAULT/rpc_response_timeout':
+    value: '960'
+  'database/max_pool_size':
+    value: '75'
+  'database/max_overflow':
+    value: '150'
+  'ncs_config/url':
+    value: "%{hiera('ncs_controller_vip')}"
+  'ncs_config/username':
+    value: "%{hiera('ncs_controller_user')}"
+  'ncs_config/password':
+    value: "%{hiera('ncs_controller_password')}"
+  'ncs_config/timeout':
+    value: "%{hiera('ncs_controller_timeout')}"
+
+neutron::config::dhcp_agent_config:
+  'DEFAULT/dhcp_domain':
+    value: 'cisco.com'
+
+# neutron::server
+neutron::server::database_connection: "mysql://neutron:%{hiera('neutron::db::mysql::password')}@%{hiera('mysql_vip')}/neutron?charset=utf8"
+neutron::server::disableml2: false
+neutron::server::sync_db: false
+neutron::server::mysql_module: 2.3
+neutron::server::agent_down_time: 75
+neutron::server::auth_host: "%{hiera('controller_internal_address')}"
+neutron::server::auth_password: "%{hiera('network_service_password')}"
+neutron::server::database_idle_timeout: 30
+
+# neutron agents::l3
+neutron::agents::l3::external_network_bridge: ''
+neutron::agents::l3::interface_driver: neutron.agent.linux.interface.OVSInterfaceDriver
+neutron::agents::l3::use_namespaces: true
+
+# neutron::agents::dhcp
+#neutron::agents::dhcp::dhcp_domain: 'cisco.com' >> Not valid in stock modules kschroed moved to neutron::config
+# Need to add file resource to manage
+neutron::agents::dhcp::dnsmasq_config_file: '/var/lib/neutron/dnsmasq.conf'
+neutron::agents::dhcp::enable_isolated_metadata: true
+neutron::agents::dhcp::interface_driver: neutron.agent.linux.interface.OVSInterfaceDriver
+neutron::agents::dhcp::use_namespaces: true
+
+# neutron::agents::fwaas
+neutron::services::fwaas::enabled: true
+
+# neutron::agents::lbaas
+neutron::agents::lbaas::enabled: true
+neutron::agents::lbaas::user_group: nobody
+neutron::agents::lbaas::debug: false
+
+# neutron::agents::ovs
+neutron::agents::ovs::bridge_mappings:
+  - "physnet1:br-ex"
+neutron::agents::ovs::disableml2: false
+
+# neutron::agents::vpnaas
+neutron::agents::vpnaas::enabled: false
+neutron::agents::vpnaas::package_ensure: present
+
+# neutron::agents::metadata
+neutron::agents::metadata::auth_password: "%{hiera('network_service_password')}"
+neutron::agents::metadata::auth_region: "%{hiera('region')}"
+neutron::agents::metadata::auth_url: "http://%{hiera('controller_internal_address')}:35357/v2.0"
+neutron::agents::metadata::metadata_ip: "%{hiera('controller_internal_address')}"
+
+# neutron::agents::ml2::ovs
+neutron::agents::ml2::ovs::bridge_mappings:
+  - "physnet1:br-ex"
+neutron::agents::ml2::ovs::bridge_uplinks:
+  - "br-ex:eth1"
+
+# neutron::plugins::ml2
+neutron::plugins::ml2::mechanism_drivers:
+  - 'openvswitch'
+  - 'l2population'
+neutron::plugins::ml2::type_drivers:
+  - "vlan"
+  - "flat"
+neutron::plugins::ml2::tenant_network_types:
+  - "vlan"
+  - "flat"
+
+# neutron::plugins::cisco
+neutron::plugins::cisco::keystone_password: "%{hiera('admin_password')}"
+
+# neutron::keystone::auth
+neutron::keystone::auth::admin_address: "%{hiera('controller_admin_address')}"
+neutron::keystone::auth::internal_address: "%{hiera('controller_internal_address')}"
+neutron::keystone::auth::password: "%{hiera('network_service_password')}"
+neutron::keystone::auth::public_address: "%{hiera('controller_public_address')}"
+neutron::keystone::auth::public_protocol: "%{hiera('controller_public_protocol')}"
+neutron::keystone::auth::region: "%{hiera('region')}"

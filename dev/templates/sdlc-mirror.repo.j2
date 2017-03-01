@@ -1,0 +1,28 @@
+{% for repo in repos_signed %}
+[{{ repo }}]
+metadata_expire = 86400
+baseurl = http://sdlc-mirror.cisco.com/{{ repo }}/
+ui_repoid_vars = releasever basearch
+name = CCS Repo {{ repo }}
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+enabled = 1
+gpgcheck = 1
+{% endfor %}
+{% for repo in repos_unsigned %}
+[{{ repo }}]
+metadata_expire = 86400
+baseurl = http://sdlc-mirror.cisco.com/{{ repo }}/
+ui_repoid_vars = releasever basearch
+name = CCS Repo {{ repo }}
+enabled = 1
+gpgcheck = 0
+{% endfor %}
+{% for repo in repos_disabled %}
+[{{ repo }}]
+metadata_expire = 86400
+baseurl = http://sdlc-mirror.cisco.com/{{ repo }}/
+ui_repoid_vars = releasever basearch
+name = CCS Repo {{ repo }}
+enabled = 0
+gpgcheck = 0
+{% endfor %}

@@ -1,0 +1,29 @@
+{% for i in yum_repositories %}
+[{{ i.id }}]
+{% if i.metadata_expire is defined %}
+metadata_expire={{ i.metadata_expire }}
+{% endif %}
+{% if i.name is defined %}
+name={{ i.name }}
+{% endif %}
+baseurl=
+{%- for j in i.base_urls %}
+{{ j }}
+{% endfor %}
+{% if i.failover_method is defined %}
+failovermethod={{ i.failover_method }}
+{% endif %}
+{% if i.enable is defined %}
+enable={{ i.enable }}
+{% else %}
+enable=1
+{% endif %}
+{% if i.gpgcheck is defined %}
+gpgcheck={{ i.gpgcheck }}
+{% else %}
+gpgcheck=0
+{% endif %}
+{% if i.gpgkey is defined %}
+gpgkey={{ i.gpgkey }}
+{% endif %}
+{% endfor %}

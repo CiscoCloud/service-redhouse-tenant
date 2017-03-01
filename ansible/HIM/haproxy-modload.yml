@@ -1,0 +1,3 @@
+---
+- name: add nf_conntrack module
+  copy: content="nf_conntrack" dest=/etc/modules-load.d/nf_conntrack.conf owner=root group=root mode=0644

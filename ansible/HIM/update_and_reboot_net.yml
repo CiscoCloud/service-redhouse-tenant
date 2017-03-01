@@ -1,0 +1,18 @@
+---
+- include: disable_neutron_ha_monitor.yml
+
+- hosts: tenant_network_agents
+  name: Updating net node
+  serial: 1
+  pre_tasks:
+    - include: requests_workaround.yml
+    - name: "evacuate routers off net node"
+      local_action: l3_evacuate target="{{ hostname }}" insecure="True"
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- include: enable_neutron_ha_monitor.yml

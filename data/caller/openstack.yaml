@@ -1,0 +1,25 @@
+---
+# openstack::auth_file
+openstack::auth_file::admin_tenant: "%{hiera('admin_tenant')}"
+openstack::auth_file::admin_password: "%{hiera('admin_password')}"
+openstack::auth_file::controller_node: "%{hiera('controller_internal_address')}"
+openstack::auth_file::admin_password: "%{hiera('admin_password')}"
+openstack::auth_file::region_name: "%{hiera('region')}"
+
+# openstack::swift::proxy
+openstack::swift::proxy::keystone_host: "%{hiera('controller_internal_address')}"
+openstack::swift::proxy::swift_proxy_net_ip: "%{hiera('bind_address')}"
+
+# openstack::swift::storage-node
+openstack::swift::storage-node::swift_local_net_ip: "%{hiera('swift_local_net_ip')}"
+
+# openstack::controller
+openstack::controller::nova_admin_tenant_name: "%{hiera('admin_tenant')}"
+openstack::controller::region: "%{hiera('region')}"
+openstack::controller::enabled: false
+
+# openstack::keystone
+openstack::keystone::region: "%{hiera('region')}"
+
+# openstack::all
+openstack::all::region: "%{hiera('region')}"

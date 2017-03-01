@@ -1,0 +1,156 @@
+---
+- name: "DE8699: openssh update"
+  hosts: "redhouse-tenant:!*horizon*"
+  tags: DE8699
+  tasks:
+   - name: "Checking packages"
+     shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+     with_items:
+      - { name: openssh, grep:  openssh-6.6.1p1-23.el7_2.x86_64}
+      - { name: openssh-clients, grep:  openssh-clients-6.6.1p1-23.el7_2.x86_64}
+      - { name: openssh-server, grep:  openssh-server-6.6.1p1-23.el7_2.x86_64}
+
+- name: "DE9070: Keystone hybrid driver update"
+  hosts: tenant_keystone_ctl
+  tags: DE9070
+  tasks:
+   - name: "Checking packages"
+     shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+     with_items:
+      - { name: python-keystone-hybrid-driver, grep: python-keystone-hybrid-driver-2014.1.4-1.noarch}
+
+- name: "DE8868: Glance API update"
+  hosts: tenant_glance_ctl
+  tags: DE8868
+  tasks:
+   - name: "Checking packages"
+     shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+     with_items:
+      - { name: python-glance, grep:  python-glance-2014.2.3-3.el7ost.noarch}
+      - { name: openstack-glance, grep:  openstack-glance-2014.2.3-3.el7ost.noarch}
+
+- name: "DE8112: Upgrade ceph clients"
+  hosts: tenant_compute*
+  tags: DE8112
+  tasks:
+   - name: "Checking packages"
+     shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+     with_items:
+      - { name: ceph-common, grep:  ceph-common-0.94.1-19.el7cp.0.hotfix.bz1296722.x86_64}
+      - { name: librados2, grep:  librados2-0.94.1-19.el7cp.0.hotfix.bz1296722.x86_64}
+      - { name: librbd1, grep:  librbd1-0.94.1-19.el7cp.0.hotfix.bz1296722.x86_64}
+      - { name: python-rbd, grep:  python-rbd-0.94.1-19.el7cp.0.hotfix.bz1296722.x86_64}
+
+- name: "DE8362: HaProxy update for MongoDB"
+  hosts: "tenant_proxy:tenant_proxy_internal"
+  tags: DE8362
+  tasks:
+     - name: "Checking HaProxy config"
+       shell: 'grep -A 8 mongodb_cluster /etc/haproxy/haproxy.cfg | egrep  "tcp-check\s+connect"'
+
+- name: "US34720: enabling service-rhel-7-server-rpms repository"
+  hosts: "redhouse-tenant:!*horizon*"
+  tags: US34720
+  tasks:
+     - name: "Checking repolist"
+       shell: "yum repolist | grep service-rhel-7-server-rpms-245"
+
+- name: "DE8710: Update Nova rpms to fix CVE-2015-7548 (Compute hosts)"
+  hosts: tenant_compute*
+  tags: DE8710
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: python-nova, grep:  python-nova-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-common, grep:  openstack-nova-common-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-compute, grep:  openstack-nova-compute-2014.1.5-15.el7ost.noarch}
+
+
+- name: "DE8710: Update Nova rpms to fix CVE-2015-7548 (Nova API)"
+  hosts: tenant_nova_ctl
+  tags: DE8710
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: python-nova, grep:  python-nova-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-common, grep:  openstack-nova-common-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-objectstore, grep:  openstack-nova-objectstore-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-scheduler, grep:  openstack-nova-scheduler-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-novncproxy, grep:  openstack-nova-novncproxy-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-cert, grep:  openstack-nova-cert-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-console, grep:  openstack-nova-console-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-conductor, grep:  openstack-nova-conductor-2014.1.5-15.el7ost.noarch}
+         - { name: openstack-nova-api, grep:  openstack-nova-api-2014.1.5-15.el7ost.noarch}
+
+- name: "DE7569: Oslo package update"
+  hosts: "redhouse-tenant:!*horizon*:!*rabbit*:!*percona*:!*net*:!*mongo*!:!*proxy*"
+  tags: DE7569
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: python-oslo-messaging, grep:  python-oslo-messaging-1.4.1-8.el7ost.noarch}
+
+- name: "US35105: Install abrt"
+  hosts: "redhouse-tenant:!*horizon*"
+  tags: US35105
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: abrt, grep:  abrt}
+         - { name: abrt-cli, grep:  abrt-cli}
+
+     - name: "Checking abrtd service is running"
+       shell: "systemctl is-active abrtd | egrep '^active'"
+
+     - name: "Checking abrt is correctly configured"
+       shell: "egrep 'ProcessUnpackaged\\s*=\\s*yes' /etc/abrt/abrt-action-save-package-data.conf"
+
+
+- name: "DE8670: Neutron update (Compute hosts)"
+  hosts: tenant_compute*
+  tags: DE8670
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: python-neutron, grep:  python-neutron-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron, grep: openstack-neutron-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron-ml2, grep: openstack-neutron-ml2-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron-openvswitch, grep: openstack-neutron-openvswitch-2014.1.3-11.13.el7.cisco.noarch}
+
+- name: "DE8670: Neutron update (Net hosts)"
+  hosts: tenant_net*
+  tags: DE8670
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: python-neutron, grep:  python-neutron-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron, grep: openstack-neutron-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron-ml2, grep: openstack-neutron-ml2-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron-openvswitch, grep: openstack-neutron-openvswitch-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron-metering-agent, grep: openstack-neutron-metering-agent-2014.1.3-11.13.el7.cisco.noarch}
+
+- name: "DE8670: Neutron update (Neutron API)"
+  hosts: tenant_neutron_api
+  tags: DE8670
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: python-neutron, grep:  python-neutron-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron, grep: openstack-neutron-2014.1.3-11.13.el7.cisco.noarch}
+         - { name: openstack-neutron-ml2, grep: openstack-neutron-ml2-2014.1.3-11.13.el7.cisco.noarch}
+
+- name: "DE7941: Updating python-swiftclient (OSP5 only -> only cinder)"
+  hosts: tenant_cinder_ctl
+  tags: DE7941
+  tasks:
+     - name: "Checking packages"
+       shell: "rpm -q {{item.name}} | grep {{item.grep}}"
+       with_items:
+         - { name: python-swiftclient, grep:  python-swiftclient-2.1.0-3.el7ost.noarch}

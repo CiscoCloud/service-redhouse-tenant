@@ -1,0 +1,64 @@
+---
+# glance::api
+glance::api::auth_url: "http://%{hiera('controller_internal_address')}:5000/v2.0"
+glance::api::keystone_password: "%{hiera('glance_service_password')}"
+glance::api::pipeline: "keystone"
+glance::api::mysql_module: 2.3
+glance::api::show_image_direct_url: true
+glance::api::sql_connection: "mysql://glance:%{hiera('glance::db::mysql::password')}@%{hiera('mysql_vip')}/glance"
+glance::api::known_stores: ['glance.store.filesystem.Store','glance.store.rbd.Store','glance.store.http.Store']
+
+# glance::registry
+glance::registry::keystone_password: "%{hiera('glance_service_password')}"
+glance::registry::mysql_module: 2.3
+glance::registry::sql_connection: "mysql://glance:%{hiera('glance::db::mysql::password')}@%{hiera('mysql_vip')}/glance"
+
+# glance::db::mysql
+glance::db::mysql::mysql_module: 2.3
+glance::db::mysql::collate: "%{hiera('mysql_default_collation')}"
+glance::db::mysql::charset: "%{hiera('mysql_default_charset')}"
+
+# glance::backend::rbd
+glance::backend::rbd::rbd_store_user: "%{hiera('ceph_glance_user')}"
+glance::backend::rbd::rbd_store_pool: "%{hiera('glance_ceph_pool')}"
+glance::backend::rbd::show_image_direct_url: true
+glance::backend::rbd::rbd_store_chunk_size: 2
+
+# glance::keystone::auth
+glance::keystone::auth::password: "%{hiera('glance_service_password')}"
+
+# glance::notify::rabbitmq
+glance::notify::rabbitmq::rabbit_notification_topic: 'notifications,cc_glance'
+glance::api::verbose: true
+glance::registry::verbose: true
+glance::api::registry_host: "%{hiera('controller_internal_address')}"
+glance::keystone::auth::internal_address: "%{hiera('controller_internal_address')}"
+glance::api::auth_host: "%{hiera('controller_internal_address')}"
+glance::registry::auth_host: "%{hiera('controller_internal_address')}"
+glance::registry::use_syslog: false
+glance::api::use_syslog: false
+glance::notify::rabbitmq::rabbit_password: "%{hiera('rpc_password')}"
+glance::keystone::auth::public_address: "%{hiera('controller_public_address')}"
+glance::registry::log_facility: LOG_USER
+glance::api::log_facility: LOG_USER
+glance::keystone::auth::password: "%{hiera('glance_service_password')}"
+glance::api::keystone_password: "%{hiera('glance_service_password')}"
+glance::registry::keystone_password: "%{hiera('glance_service_password')}"
+glance::package_ensure: present
+glance::keystone::auth::admin_address: "%{hiera('controller_admin_address')}"
+glance::registry::bind_host: "%{hiera('bind_address')}"
+glance::api::bind_host: "%{hiera('bind_address')}"
+glance::keystone::auth::public_protocol: "%{hiera('controller_public_protocol')}"
+glance::keystone::auth::region: "%{hiera('region')}"
+glance::registry::sql_idle_timeout: 30
+glance::api::sql_idle_timeout: 30
+glance::notify::rabbitmq::rabbit_userid: "%{hiera('rpc_user')}"
+glance::api::debug: false
+glance::registry::debug: false
+glance::db::mysql::allowed_hosts: "%{hiera('allowed_hosts')}"
+glance::db::mysql::host: "%{hiera('localhost')}"
+
+# glance::config
+glance::config::api_config:
+  'DEFAULT/notification_topics':
+    value: "notifications,cc_glance"

@@ -1,0 +1,20 @@
+---
+- name: "Verifying up-to-date package repositories"
+  hosts: "redhouse-tenant:!*-ceph1-*"
+  gather_facts: no
+  vars:
+    latest_repos:
+      - rhel_7:
+        version: HIM1.19
+        file: service-rhel-7-server-rpms.repo
+      - osp_5:
+        version: HIM1.11
+        file: service-rhel-7-server-openstack-5.0-rpms.repo
+      - osp_6:
+        version: HIM1.6
+        file: service-rhel-7-server-openstack-6.0-rpms.repo
+  tasks:
+    - name: "Checking latest .repo files in /etc/yum.repos.d/"
+      shell: "/usr/bin/fgrep {{ item.version }} /etc/yum.repos.d/{{ item.file }}"
+      with_items: "{{ latest_repos }}"
+      changed_when: false

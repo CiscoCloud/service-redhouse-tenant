@@ -1,0 +1,8 @@
+- hosts: 'csm-a-nova*'
+  serial: 20
+  tasks:
+    - include: helpers/yum_upgrade.yml
+    - include: helpers/run_puppet.yml
+    - include: helpers/reboot.yml
+
+

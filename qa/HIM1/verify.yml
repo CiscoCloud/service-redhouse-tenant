@@ -1,0 +1,314 @@
+---
+- include: ../general/verify.yaml
+
+- name: "OSP1CIS-67: CVE-2015-7547: Gnu C Library (glibc) Vulnerability"
+  hosts: "redhouse-tenant:!*-ceph1-*"
+  tags: OSP1CIS-67
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - glibc-2.17-106.el7_2.8.x86_64
+    - glibc-common-2.17-106.el7_2.8.x86_64
+
+- name: "OSP1CIS-156: openvswitch CVE-2016-2074 / RHSA-2016-0523 patch"
+  hosts: "tenant_compute_*:tenant_network_agents"
+  tags: OSP1CIS-156
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - openvswitch-2.4.0-2.el7_2.x86_64
+
+- name: "OSP1CIS-236: qemu-kvm crashed with double free in librados stack"
+  hosts: "tenant_cinder_ctl:tenant_glance_ctl:tenant_compute_*"
+  tags: OSP1CIS-236
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - ceph-common-0.94.5-13.el7cp.x86_64
+    - librados2-0.94.5-13.el7cp.x86_64
+    - librbd1-0.94.5-13.el7cp.x86_64
+    - python-rados-0.94.5-13.el7cp.x86_64
+    - python-rbd-0.94.5-13.el7cp.x86_64
+
+- name: "OSP1CIS-297: CVE-2016-3710: qemu-kvm-rhev security update: glance & nova "
+  hosts: "tenant_glance_ctl:tenant_compute_*"
+  tags: OSP1CIS-297
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - qemu-img-rhev-2.3.0-31.el7_2.13.x86_64
+    - qemu-kvm-common-rhev-2.3.0-31.el7_2.13.x86_64
+    - qemu-kvm-rhev-2.3.0-31.el7_2.13.x86_64
+
+- name: "OSP1CIS-297: CVE-2016-3710: qemu-kvm-rhev security update: cinder_ctl"
+  hosts: tenant_cinder_ctl
+  tags: OSP1CIS-297
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - qemu-img-rhev-2.3.0-31.el7_2.13.x86_64
+    - qemu-guest-agent-2.3.0-4.el7.x86_64
+
+- name: "OSP1CIS-370: Update Cinder Packages to reduce slowness"
+  hosts: tenant_cinder_ctl
+  tags: OSP1CIS-370
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - openstack-cinder-2014.1.5-8.el7ost.noarch
+    - python-cinder-2014.1.5-8.el7ost.noarch
+  - name: "OSP1CIS-533: Check to see if rate limiting filter is configured in repose"
+    shell: grep '"rate-limiting"' /etc/repose/system-model.cfg.xml
+    changed_when: False
+
+- name: "OSP1CIS-415 & 424: as per Rabbit Get Well Plan"
+  hosts: tenant_rabbitmq
+  tags: [ 'OSP1CIS-415', 'OSP1CIS-424' ]
+  gather_facts: no
+  tasks:
+  - name: "OSP1CIS-415 Checking upgraded Rabbit & Erlang Packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - rabbitmq-server-3.3.5-22.el7ost.noarch
+    - erlang-erts-R16B-03.7min.1.el7ost.x86_64
+    - erlang-stdlib-R16B-03.7min.1.el7ost.x86_64
+    - erlang-runtime_tools-R16B-03.7min.1.el7ost.x86_64
+    - erlang-os_mon-R16B-03.7min.1.el7ost.x86_64
+    - erlang-compiler-R16B-03.7min.1.el7ost.x86_64
+    - erlang-inets-R16B-03.7min.1.el7ost.x86_64
+    - erlang-sd_notify-0.1-3.cisco.x86_64
+    - erlang-snmp-R16B-03.7min.1.el7ost.x86_64
+    - erlang-xmerl-R16B-03.7min.1.el7ost.x86_64
+    - erlang-asn1-R16B-03.7min.1.el7ost.x86_64
+    - erlang-tools-R16B-03.7min.1.el7ost.x86_64
+    - erlang-crypto-R16B-03.7min.1.el7ost.x86_64
+    - erlang-sasl-R16B-03.7min.1.el7ost.x86_64
+    - erlang-syntax_tools-R16B-03.7min.1.el7ost.x86_64
+    - erlang-public_key-R16B-03.7min.1.el7ost.x86_64
+    - erlang-kernel-R16B-03.7min.1.el7ost.x86_64
+    - erlang-mnesia-R16B-03.7min.1.el7ost.x86_64
+    - erlang-otp_mibs-R16B-03.7min.1.el7ost.x86_64
+    - erlang-hipe-R16B-03.7min.1.el7ost.x86_64
+    - erlang-ssl-R16B-03.7min.1.el7ost.x86_64
+  - name: "OSP1CIS-424 Checking /etc/sysctl.conf for Rabbit tuning"
+    shell: "fgrep {{item}} /etc/sysctl.conf"
+    changed_when: False
+    with_items:
+    - "net.ipv4.tcp_keepalive_intvl=1"
+    - "net.ipv4.tcp_keepalive_time=5"
+    - "net.ipv4.tcp_keepalive_probes=5"
+
+- name: "OSP1CIS-438: Update vulnerable Java per RHBA-2016:0752"
+  hosts: "tenant_ceilometer_ctl:tenant_glance_ctl:tenant_heat_ctl:tenant_keystone_ctl:tenant_neutron_api:tenant_nova_ctl:tenant_proxy"
+  tags: OSP1CIS-438
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - java-1.7.0-openjdk-1.7.0.101-2.6.6.1.el7_2.x86_64
+    - java-1.7.0-openjdk-headless-1.7.0.101-2.6.6.1.el7_2.x86_64
+
+- name: "OSP1CIS-439: CVE-2016-2107 OpenSSL Padding oracle in AES-NI CBC MAC"
+  hosts: "redhouse-tenant:!*-ceph1-*"
+  tags: OSP1CIS-439
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - openssl-1.0.1e-51.el7_2.5.x86_64
+
+# java-1.8.0 is installed incredibly inconsistently.
+# I give up creating sane host list for this test.
+# ceilometer and glance seem to be the only ones that got it in London
+- name: "OSP1CIS-440: RH update for java-1.7.0-openjdk security RHSA-2016:0676"
+  hosts: "tenant_ceilometer_ctl:tenant_glance_ctl"
+  tags: OSP1CIS-440
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - java-1.8.0-openjdk-1.8.0.101-3.b13.el7_2.x86_64
+    - java-1.8.0-openjdk-headless-1.8.0.101-3.b13.el7_2.x86_64
+
+- name: "OSP1CIS-455: Custom repose filter to block access with build server"
+  hosts: tenant_glance_ctl
+  tags: OSP1CIS-455
+  gather_facts: no
+  tasks:
+  - name: "Checking custom filter"
+    shell: grep '"block-glance-image-http-download"' /etc/repose/system-model.cfg.xml
+    changed_when: False
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - ccs-repose-filters-1.0.12
+
+- name: "OSP1CIS-443: Update kernel to 3.10.0-327.28.3.el7.x86_64"
+  hosts: "redhouse-tenant:!*-ceph1-*"
+  tags: OSP1CIS-443
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - kernel-3.10.0-327.28.3.el7.x86_64
+
+- name: "OSP1CIS-492: sysctl settings were reverted back"
+  hosts: "tenant_proxy*"
+  tags: OSP1CIS-492
+  gather_facts: no
+  tasks:
+  - name: "Checking proxy /etc/sysctl.conf settings"
+    shell: "fgrep {{item}} /etc/sysctl.conf"
+    changed_when: False
+    with_items:
+    - "net.ipv4.tcp_keepalive_intvl=75"
+    - "net.ipv4.tcp_keepalive_time=7200"
+    - "net.ipv4.tcp_keepalive_probes=9"
+    - "net.ipv4.tcp_retries2=15"
+
+- name: "OSP1CIS-505: Nova api occasionally throwing 500 http error"
+  hosts: tenant_nova_ctl
+  tags: OSP1CIS-505
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "fgrep shutdown-timeout /etc/httpd/conf.d/10-nova_wsgi_osapi.conf | awk '{print $7}' | awk -F= '{print $2}'"
+    register: timeout_value
+    changed_when: False
+  - name: "Checking shutdown-timeout in /etc/httpd/conf.d/10-nova_wsgi_osapi.conf"
+    fail:
+      msg: "shutdown-timeout != 30 in /etc/httpd/conf.d/10-nova_wsgi_osapi.conf"
+    when: timeout_value.stdout|int != 30
+
+- name: "OSP1CIS-238: Set scheduler_host_subset_size=5 in nova.conf to avoid collisions"
+  hosts: tenant_nova_ctl
+  tags: OSP1CIS-238
+  gather_facts: no
+  tasks:
+  - name: "Check value of scheduler_host_subset_size=5 in nova.conf"
+    shell: "grep 'scheduler_host_subset_size=5' /etc/nova/nova.conf"
+    changed_when: False
+
+- name: "OSP1CIS-512: Update neutron-ha-tool package to 1.0.1-1"
+  hosts: tenant_neutron_api
+  tags: OSP1CIS-512
+  gather_facts: no
+  tasks:
+  - name: "Check version of neutron-ha-tool matches 1.0.1-1"
+    shell: "rpm -q neutron-ha-tool-1.0.1-1.noarch"
+    changed_when: False
+
+- name: "OSP1CIS-582: Upgrade httpd per RHBA-2016:1154"
+  hosts: "tenant_horizon:tenant_keystone_ctl:tenant_nova_ctl"
+  tags: OSP1CIS-582
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - httpd-2.4.6-40.el7_2.4.x86_64
+    - httpd-tools-2.4.6-40.el7_2.4.x86_64
+
+- name: "OSP1CIS-321: Upgrade systemd to systemd-219-19"
+  hosts: "redhouse-tenant:!*-ceph1-*"
+  tags: OSP1CIS-321
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - systemd-219-19.el7_2.12.x86_64
+
+- name: "OSP1CIS-608: Instances intermittently fail to get an ip address - NET HOSTS"
+  hosts: "tenant_network_agents"
+  tags: OSP1CIS-608
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - python-oslo-rootwrap-1.0.0-3.el7ost.noarch
+    - openstack-neutron-2014.1.3-11.17.el7.cisco.noarch
+
+- name: "OSP1CIS-608: Instances intermittently fail to get an ip address - NOVA HOSTS"
+  hosts: "tenant_compute_*"
+  tags: OSP1CIS-608
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - openstack-neutron-2014.1.3-11.17.el7.cisco.noarch
+
+- name: "OSP1CIS-626: ComputeFilter first"
+  hosts: tenant_nova_ctl
+  tags: OSP1CIS-626
+  gather_facts: no
+  tasks:
+  - shell: "grep -e '^scheduler_default_filters=ComputeFilter,' /etc/nova/nova.conf"
+    changed_when: False
+
+- name: "OSP1CIS-658: Red Hat Update for spice RHSA-2016:1205"
+  hosts: "tenant_compute_*:tenant_glance_ctl"
+  tags: OSP1CIS-658
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - spice-server-0.12.4-15.el7.x86_64
+
+- name: "OSP1CIS-659: Red Hat Update for cups RHSA-2015:1123"
+  hosts: "redhouse-tenant:!*-ceph1-*"
+  tags: OSP1CIS-659
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - cups-libs-1.6.3-22.el7.x86_64
+
+- name: "OSP1CIS-661: Red Hat Update for bind RHSA-2015:1443"
+  hosts: "redhouse-tenant:!*-ceph1-*"
+  tags: OSP1CIS-661
+  gather_facts: no
+  tasks:
+  - name: "Checking packages"
+    shell: "rpm -q {{item}}"
+    changed_when: False
+    with_items:
+    - bind-libs-9.9.4-29.el7_2.3.x86_64

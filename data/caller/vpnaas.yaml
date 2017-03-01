@@ -1,0 +1,7 @@
+---
+#VPNaaS settings
+vpnaas::vpnaas_driver_install_server::vpnaas_driver_package:
+  - 'python-openstack-neutron-vpnaas-ncs-driver'
+vpnaas::vpnaas_driver_install_agent::vpnaas_driver_package:
+  - 'python-openstack-neutron-vpnaas-ncs-driver'
+

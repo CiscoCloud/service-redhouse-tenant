@@ -1,0 +1,50 @@
+- name: update yum cache
+  shell: yum makecache fast
+  tags: install_package
+
+- name: install redhouse-tenant-{{ redhouse_version }}
+  yum: name=service-redhouse-tenant-{{ redhouse_version }} state=present
+  tags: install_package
+
+- name: install ccs-data-{{ data_package }}-{{ data_version }}
+  yum: name=ccs-data-{{ data_package }}-{{ data_version }} state=present
+  tags: install_package
+
+- name: Link global data files
+  file: src=/etc/puppet/data/hiera_data/site.yaml dest=/opt/ccs/services/{{ service }}/data/site.yaml state=link
+  tags: install_package
+
+- name: set role fact
+  lineinfile: line="role={{ role }}" dest=/etc/facter/facts.d/role.txt create=yes state=present
+  tags: install_package
+
+- name: puppet apply
+  shell: "puppet apply -v --show_diff --color=false --confdir . manifests/site.pp {{ args }} 2>&1"
+  changed_when: False
+  failed_when: puppet_output == 1
+  register: puppet_output
+  args:
+    chdir: /opt/ccs/services/{{ service }}/puppet
+
+- debug: var=puppet_output.stdout_lines
+- debug: var=puppet_output.stderr
+
+- name: uninstall latest packages
+  yum: name="{{ item }}" state=absent
+  with_items:
+    - service-redhouse-tenant
+    - ccs-data-{{ data_package }}
+  tags: remove_package
+
+- name: grab the puppet run
+  fetch: src="{{ log_name }}" dest={{ log_dir }}
+
+- name: delete the run file on the server
+  command: rm -f {{ log_name }}
+
+- name: write any errors
+  local_action: copy content="{{ puppet_output.stderr }}" dest="{{ log_dir }}/{{ ansible_fqdn }}/{{ log_name }}"
+  when: puppet_output.stderr
+
+- name: display log file location
+  debug: msg="Wrote log file to {{ log_dir }}/{{ ansible_hostname }}/{{ log_name }}"

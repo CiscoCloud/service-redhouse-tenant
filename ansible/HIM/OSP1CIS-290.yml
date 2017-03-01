@@ -1,0 +1,15 @@
+---
+- name: "Remove erroneously introduced kernel modules per OSP1CIS-290"
+  hosts: "redhouse-tenant:!tenant_network_agents:!tenant_compute_*:!*-ceph*-*:!*pib*:!*swift*:!horizon*"
+  gather_facts: no
+  tasks:
+    - modprobe: name=8021q state=absent
+    - modprobe: name=bridge state=absent
+    - modprobe: name=ip_conntrack state=absent
+    - modprobe: name=nf_conntrack_proto_gre state=absent
+    - shell: >
+        rm -f /etc/sysconfig/modules/bridge.modules
+        /etc/sysconfig/modules/ip_conntrack.modules
+        /etc/sysconfig/modules/nf_conntrack_proto_gre.modules
+        /etc/sysconfig/modules/vlan.modules
+      changed_when: false

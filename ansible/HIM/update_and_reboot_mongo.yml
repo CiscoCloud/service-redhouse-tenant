@@ -1,0 +1,33 @@
+---
+- hosts: "~(.*)mongodb-001"
+  name: "Updating mongodb-001"
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: "~(.*)mongodb-002"
+  name: "Updating mongodb-002"
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml
+
+- hosts: "~(.*)mongodb-003"
+  name: "Updating mongodb-003"
+  pre_tasks:
+    - include: requests_workaround.yml
+  roles:
+    - ../roles/yum
+    - ../roles/puppet
+  tasks:
+    - { include: ../helpers/reboot.yml, tags: [ 'reboot', 'tagged' ] }
+    - include: ../roles/puppet/tasks/check_state.yml

@@ -1,0 +1,26 @@
+---
+classes:
+  - ccs::base
+  - ccs::compute
+  - ccs::compute::rbd
+
+nova::config::nova_config:
+  'DEFAULT/allow_resize_to_same_host':
+    value: true
+  'DEFAULT/force_raw_images':
+    value: 1
+  'DEFAULT/resize_confirm_window':
+    value: 0
+  'DEFAULT/force_dhcp_release':
+    value: 'True'
+  'DEFAULT/dhcp_domain':
+    value: 'cisco.com'
+  'DEFAULT/config_drive_format':
+    value: 'vfat'
+  'libvirt/live_migration_flag':
+    value: 'VIR_MIGRATE_UNDEFINE_SOURCE,VIR_MIGRATE_PEER2PEER,VIR_MIGRATE_LIVE,VIR_MIGRATE_AUTO_CONVERGE'
+
+neutron::agents::ml2::ovs::bridge_uplinks:
+  - "br-ex:eth1"
+
+ccs::base::selinux::mode: "Enforcing"

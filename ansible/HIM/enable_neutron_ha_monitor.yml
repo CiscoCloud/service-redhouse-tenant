@@ -1,0 +1,10 @@
+---
+- hosts: "~(.*)neutronapi-001"
+  name: "ENABLE neutron-ha-tool.py cron job on neutronapi-001"
+  gather_facts: no
+  tasks:
+    - stat: path=/tmp/neutron_ha_tool
+      register: cron_job_tmp
+    - shell: mv -f /tmp/neutron_ha_tool /etc/cron.d/neutron_ha_tool
+      when: cron_job_tmp.stat.exists
+  tags: [ 'reboot', 'tagged', 'neutron_cron' ]

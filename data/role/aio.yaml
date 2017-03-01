@@ -1,0 +1,42 @@
+---
+classes:
+  - ccs::base
+  - ccs::aio
+  - ccs::galera
+  - ccs::mongodb
+  - ccs::glance_api
+  - ccs::gleek
+  - ccs::cinder_api
+  - ccs::cinder_volume
+  - ccs::keystone
+  - ccs::heat_api
+  - ccs::horizon
+  - ccs::nova_api
+  - ccs::neutron_agents
+  - ccs::neutron_server
+  - ccs::proxy_internal
+  - ccs::rabbitmq
+  - ccs::ceilometer_api
+
+neutron::agents::lbaas::manage_haproxy_package: false
+nova::config::nova_config:
+  'DEFAULT/flat_injected':
+    value: 'true'
+  'DEFAULT/dhcp_domain':
+    value: "%{hiera('domain_name')}"
+neutron::agents::ml2::ovs::bridge_uplinks:
+  - "br-ex:eth1"
+neutron::agents::ml2::ovs::bridge_mappings:
+  - "physnet1:br-ex"
+neutron::agents::dhcp::dhcp_delete_namespaces:
+  - "True"
+neutron::agents::l3::router_delete_namespaces:
+  - "True"
+neutron::agents::metadata::metadata_workers:
+  - "%{::processorcount}"
+neutron::server::rpc_workers:
+  - "%{::processorcount}"
+neutron::server::api_workers:
+  - "%{::processorcount}"
+neutron::server::router_scheduler_driver:
+  - "neutron.scheduler.l3_agent_scheduler.LeastRoutersScheduler"

@@ -1,0 +1,10 @@
+---
+# check for the fix for: https://review.openstack.org/#/c/196873
+- name: Heat HaProxy check
+  hosts: tenant_proxy_internal
+  tasks:
+    - shell: "grep -A 10 heat_api_cluster /etc/haproxy/haproxy.cfg | egrep '{{item}}'"
+      with_items:
+        - "X-Forwarded-Proto(.*)https"
+        - "mode\\s+http"
+

@@ -1,0 +1,23 @@
+---
+
+- name: Wait for Mysql port
+  wait_for: host={{ ansible_default_ipv4.address }} port=3306 delay=30
+  when: "'tenant_percona' in group_names or 'aio' in group_names"
+
+- name: Wait for Rabbit port
+  wait_for: host={{ ansible_default_ipv4.address }} port=5672 delay=30
+  when: "'tenant_rabbitmq' in group_names or 'aio' in group_names"
+
+- name: Wait for Rabbit cluster partition status
+  command: rabbitmqctl cluster_status
+  register: rabbitmq_cluster_status
+  until: rabbitmq_cluster_status.stdout.find("{partitions,[]}") != -1
+  changed_when: false
+  retries: 30
+  delay: 10
+  when: "'tenant_rabbitmq' in group_names or 'aio' in group_names"
+
+- name: Wait for MongoDB port
+  wait_for: host={{ ansible_default_ipv4.address }} port=27017 delay=30
+  when: "'tenant_mongodb' in group_names"
+

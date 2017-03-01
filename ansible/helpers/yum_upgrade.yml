@@ -1,0 +1,26 @@
+---
+- name: Remove existing yum repo files
+  shell: rm -f /etc/yum.repos.d/*.repo
+  when: repo_file is defined
+
+- name: Copy Yum repo file
+  copy: src={{ repo_file }} dest=/etc/yum.repos.d/build-mirror.repo
+
+- name: Clean yum cache
+  shell: yum clean all
+
+- name: Yum upgrade for control plane
+  yum: name=* state=latest disablerepo=*,rhel-7-server-openstack-6.0-rpms* enablerepo=*_2.2 disable_gpg_check=yes
+  register: yum_upgrade
+  when: "'tenant_cinder_ctl' in group_names or 'tenant_compute_bigdata' in group_names or 'tenant_compute_local' in group_names or 'tenant_compute_rbd' in group_names or 'tenant_glance_ctl' in group_names or 'tenant_keystone_ctl' in group_names or 'tenant_network_agents' in group_names or 'tenant_neutron_api' in group_names or 'tenant_nova_ctl' in group_names or 'tenant_proxy' in group_names or 'aio' in group_names or 'compute_local' in group_names"
+
+- name: Yum upgrade for ceilometer and heat controllers
+  yum: name=* state=latest disablerepo=*,rhel-7-server-openstack-5.0-rpms* enablerepo=*_2.2 disable_gpg_check=yes
+  register: yum_upgrade
+  when: "'tenant_ceilometer_ctl' in group_names or 'tenant_heat_ctl' in group_names"
+
+- name: Yum upgrade data plane (Percona, Rabbit, MongoDB)
+  yum: name=* state=latest disablerepo=*,rhel-7-server-openstack-6.0-rpms* enablerepo=*_2.2 disable_gpg_check=yes
+  register: yum_upgrade
+  when: "'tenant_percona' in group_names or 'tenant_rabbitmq' in group_names or 'tenant_mongodb' in group_names"
+

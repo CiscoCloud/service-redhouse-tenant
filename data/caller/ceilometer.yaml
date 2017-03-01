@@ -1,0 +1,61 @@
+---
+# ceilometer
+ceilometer::rpc_backend: 'ceilometer.openstack.common.rpc.impl_kombu'
+ceilometer::verbose: true
+ceilometer::use_syslog: false
+ceilometer::rabbit_password: "%{hiera('rpc_password')}"
+ceilometer::log_facility: LOG_USER
+ceilometer::package_ensure: present
+ceilometer::rabbit_userid: "%{hiera('rpc_user')}"
+ceilometer::debug: false
+
+# ceilometer::db
+ceilometer::db::database_connection: "mongodb://ceilometer:%{hiera('ceilometer::db::mysql::password')}@%{hiera('controller_internal_address')}:27017/ceilometer"
+ceilometer::db::mysql_module: 2.3
+
+# ceilometer::db::mysql
+ceilometer::db::mysql::mysql_module: 2.3
+ceilometer::db::mysql::charset: "%{hiera('mysql_default_charset')}"
+ceilometer::db::mysql::collate: "%{hiera('mysql_default_collation')}"
+ceilometer::db::mysql::allowed_hosts: "%{hiera('allowed_hosts')}"
+ceilometer::db::mysql::host: "%{hiera('localhost')}"
+
+# ceilometer::config
+ceilometer::config::ceilometer_config:
+  'DEFAULT/rabbit_max_retries':
+    value: '3'
+  'DEFAULT/rpc_thread_pool_size':
+    value: '5'
+  'DEFAULT/use_stderr':
+    value: 'false'
+  'DEFAULT/enable_v1_api':
+    value: 'false'
+  'database/time_to_live':
+    value: '691200'
+  'publisher_rpc/metering_topic':
+    value: 'ceilometer.collector.metering'
+
+# ceilometer::keystone::auth
+ceilometer::keystone::auth::password: "%{hiera('ceilometer_service_password')}"
+ceilometer::keystone::auth::internal_address: "%{hiera('controller_internal_address')}"
+ceilometer::keystone::auth::public_address: "%{hiera('controller_public_address')}"
+ceilometer::keystone::auth::admin_address: "%{hiera('controller_admin_address')}"
+ceilometer::keystone::auth::email: "%{hiera('admin_email')}"
+ceilometer::keystone::auth::public_protocol: "%{hiera('controller_public_protocol')}"
+ceilometer::keystone::auth::region: "%{hiera('region')}"
+
+# ceilometer::api
+ceilometer::api::keystone_password: "%{hiera('ceilometer_service_password')}"
+ceilometer::api::keystone_host: "%{hiera('controller_internal_address')}"
+ceilometer::api::host: "%{hiera('bind_address')}"
+
+# ceilometer::agent
+ceilometer::agent::auth::auth_password: "%{hiera('ceilometer_service_password')}"
+ceilometer::agent::auth::auth_url: "%{hiera('controller_internal_url')}/v2.0/"
+ceilometer::agent::auth::auth_region: "%{hiera('region')}"
+ceilometer::agent::auth::auth_endpoint_type: internalURL
+ceilometer::agent::notification::store_events: true
+
+# ceilometer::alarm
+ceilometer::alarm::notifier::notifier_rpc_topic: "ceilometer.alarm.alarm_notifier"
+ceilometer::alarm::evaluator::evaluation_service: "ceilometer.alarm.service.PartitionedAlarmService"

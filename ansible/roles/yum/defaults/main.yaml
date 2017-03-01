@@ -1,0 +1,14 @@
+---
+repos_signed:
+  - rhel-7-server-rpms-7.2
+  - rhel-7-server-optional-rpms
+repos_unsigned:
+  - percona-centos6
+  - ccs-secure-repo
+  - rhel-7-server-hybrid-rpms
+  - ice-1.2.2-ceph
+  - ice-1.2.2-ceph-deploy
+yum_update_exclude_repos: 
+  - "ccs-secure-repo*"
+kernel_mon: "/usr/share/check-mk-agent/local/check_kernel_version"
+osp_rel_mon: "/usr/share/check-mk-agent/local/check_openstack_release_compute"

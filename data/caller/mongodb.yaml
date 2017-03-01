@@ -1,0 +1,16 @@
+---
+# mongodb::server
+mongodb::server::auth: true
+mongodb::server::bind_ip: 0.0.0.0
+mongodb::server::fork: false
+mongodb::server::journal: true
+mongodb::server::keyfile: '/etc/mongodb_keyfile'
+mongodb::server::nohttpinterface: true
+mongodb::server::service_provider: systemd
+mongodb::server::set_parameter: 'enableLocalhostAuthBypass=1'
+# key interpolation until upstream keyfile merged
+mongodb::server::key: "%{hiera('mongodb_key')}"
+mongodb::server::keyfile: "%{hiera('mongodb_keyfile')}"
+
+# mongodb::replset
+mongodb::replset: 'openstack-mongo'

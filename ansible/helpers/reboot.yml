@@ -1,0 +1,64 @@
+---
+- name: Reboot {{ inventory_hostname }}
+  shell: sleep 3; /usr/sbin/reboot
+  async: 1
+  poll: 0
+  ignore_errors: true
+  failed_when: false
+  tags: reboot
+
+- name: Wait for host to come back {{ inventory_hostname }}
+  local_action: wait_for host={{ inventory_hostname }} port=22 timeout=900 delay=35 state=started
+  tags: reboot
+
+- name: Fix mysql start issue
+  shell: mkdir /var/run/mariadb; chown mysql:mysql /var/run/mariadb
+  when: "'aio' in group_names"
+  tags: reboot
+
+- name: Start mysql
+  service: name=mysql state=started
+  when: "'aio' in group_names"
+  tags: reboot
+
+- name: Check for Nova Compute Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=16509 delay=35
+  when: "'tenant_compute_rbd' in group_names or 'tenant_compute_local' in group_names or 'tenant_compute_bigdata' in group_names"
+  tags: reboot
+
+- name: Check for Mysql Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=3306 delay=30
+  when: "'tenant_percona' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Nova API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=8774 delay=30
+  when: "'tenant_nova_ctl' in group_names or 'aio' in group_names"
+
+- name: Check for Neutron API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=9696 delay=30
+  when: "'tenant_neutron_api' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Keystone API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=35357 delay=30
+  when: "'tenant_keystone_ctl' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Glance API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=9292 delay=30
+  when: "'tenant_glance_ctl' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Cinder API Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=8776 delay=30
+  when: "'tenant_cinder_ctl' in group_names or 'aio' in group_names"
+  tags: reboot
+
+- name: Check for Horizon Service
+  wait_for: host={{ ansible_default_ipv4.address }} port=80 delay=30
+  when: "'tenant_horizon' in group_names or 'aio' in group_names"
+  tags: reboot
+
+# TODO: need to find a way to check if net nodes came up properly
+#

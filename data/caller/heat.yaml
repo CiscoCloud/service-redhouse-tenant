@@ -1,0 +1,73 @@
+---
+# heat
+heat::auth_uri: "%{hiera('controller_public_url')}/v3"
+heat::sql_connection: "mysql://heat:%{hiera('heat::db::mysql::password')}@%{hiera('mysql_vip')}/heat"
+heat::mysql_module: 2.3
+heat::database_idle_timeout: 30
+heat::debug: false
+heat::keystone_ec2_uri: "http://%{hiera('controller_internal_address')}:5000/v2.0/ec2tokens"
+heat::keystone_host: "%{hiera('controller_internal_address')}"
+heat::keystone_password: "%{hiera('heat_service_password')}"
+heat::log_facility: LOG_USER
+heat::package_ensure: present
+heat::rabbit_password: "%{hiera('rpc_password')}"
+heat::rabbit_userid: "%{hiera('rpc_user')}"
+heat::use_syslog: false
+heat::verbose: true
+
+# heat::engine
+heat::engine::auth_encryption_key: 'notgood but just long enough i think'
+heat::engine::heat_metadata_server_url: "%{hiera('controller_public_protocol')}://%{hiera('controller_public_address')}:8000"
+heat::engine::heat_waitcondition_server_url: "%{hiera('controller_public_protocol')}://%{hiera('controller_public_address')}:8000/v1/waitcondition"
+heat::engine::heat_watch_server_url: "%{hiera('controller_public_protocol')}://%{hiera('controller_public_address')}:8003"
+# dont think the below is used anymore? requires heat_stack_user_role
+heat::engine::trusts_delegated_roles: ''
+heat::engine::configure_delegated_roles: false
+heat::engine::heat_stack_user_role: 'heat_stack_user'
+
+# heat::db::mysql
+heat::db::mysql::mysql_module: 2.3
+heat::db::mysql::charset: "%{hiera('mysql_default_charset')}"
+heat::db::mysql::collate: "%{hiera('mysql_default_collation')}"
+heat::db::mysql::allowed_hosts: "%{hiera('allowed_hosts')}"
+heat::db::mysql::host: "%{hiera('controller_internal_address')}"
+
+# heat::api
+heat::api::workers:
+  - "%{::processorcount}"
+
+# heat::api_cfn
+heat::api_cfn::bind_host: "%{hiera('bind_address')}"
+heat::api_cfn::workers:
+  - "%{::processorcount}"
+
+# heat::api_cloudwatch
+heat::api_cloudwatch::bind_host: "%{hiera('bind_address')}"
+heat::api_cloudwatch::workers:
+  - "%{::processorcount}"
+
+# heat::keystone::auth
+heat::keystone::auth::admin_address: "%{hiera('controller_admin_address')}"
+heat::keystone::auth::internal_address: "%{hiera('controller_internal_address')}"
+heat::keystone::auth::password: "%{hiera('heat_service_password')}"
+heat::keystone::auth::public_address: "%{hiera('controller_public_address')}"
+heat::keystone::auth::public_protocol: "%{hiera('controller_public_protocol')}"
+heat::keystone::auth::region: "%{hiera('region')}"
+
+# heat::keystone::auth_cfn
+heat::keystone::auth_cfn::admin_address: "%{hiera('controller_admin_address')}"
+heat::keystone::auth_cfn::internal_address: "%{hiera('controller_internal_address')}"
+heat::keystone::auth_cfn::password: "%{hiera('heat_service_password')}"
+heat::keystone::auth_cfn::public_address: "%{hiera('controller_public_address')}"
+heat::keystone::auth_cfn::public_protocol: "%{hiera('controller_public_protocol')}"
+heat::keystone::auth_cfn::region: "%{hiera('region')}"
+
+# heat::keystone::domain
+heat::keystone::domain::auth_url: "%{hiera('controller_internal_url')}/v2.0"
+heat::keystone::domain::keystone_admin: "admin"
+heat::keystone::domain::keystone_password: "%{hiera('admin_password')}"
+heat::keystone::domain::keystone_tenant: "%{hiera('admin_tenant')}"
+heat::keystone::domain::domain_password: "%{hiera('heat_service_password')}"
+heat::keystone::domain::domain_admin: 'heat_domain_admin'
+# heat::api
+heat::api::bind_host: "%{hiera('bind_address')}"

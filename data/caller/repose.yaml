@@ -1,0 +1,14 @@
+---
+# Repose Settings
+repose::ensure: 7.1.4.0-1
+repose::rh_old_packages: false
+repose::cfg_upstream_repo: false
+# repose::daemonize_from_file: true
+repose::cfg_new_namespace: true
+
+# Repose Repository Settings
+repose::repo::yum_repose_repo_gpgcheck: '0'
+#repose::repo::yum_repose_repo_baseurl: https://ccs-artifactory.cisco.com/artifactory/repose
+
+# Daemonize Settings
+repose::daemonize::package: daemonize-1.7.5-7.el7.x86_64.rpm

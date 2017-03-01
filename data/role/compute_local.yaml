@@ -1,0 +1,11 @@
+---
+classes:
+  - ccs::base
+  - ccs::compute
+
+nova::compute::force_config_drive: true
+nova::config::nova_config:
+  'DEFAULT/flat_injected':
+    value: 'true'
+  'DEFAULT/dhcp_domain':
+    value: "%{hiera('domain_name')}"

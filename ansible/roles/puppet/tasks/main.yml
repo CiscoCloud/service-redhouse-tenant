@@ -1,0 +1,4 @@
+---
+- include: ../../../helpers/run_puppet.yml
+- include: update_monitoring.yml
+- include: check_state.yml tags=check_state

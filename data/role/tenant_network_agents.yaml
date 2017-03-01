@@ -1,0 +1,15 @@
+---
+classes:
+  - ccs::base
+  - ccs::neutron_agents
+
+neutron::agents::ml2::ovs::bridge_uplinks:
+  - "br-ex:eth1"
+neutron::agents::ml2::ovs::bridge_mappings:
+  - "physnet1:br-ex"
+neutron::agents::dhcp::dhcp_delete_namespaces:
+  - "True"
+neutron::agents::l3::router_delete_namespaces:
+  - "True"
+neutron::agents::metadata::metadata_workers:
+  - "%{::processorcount}"

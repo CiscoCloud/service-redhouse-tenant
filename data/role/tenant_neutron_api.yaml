@@ -1,0 +1,11 @@
+---
+classes:
+  - ccs::base
+  - ccs::neutron_server
+  - ccs::repose
+neutron::server::rpc_workers:
+  - "%{::processorcount}"
+neutron::server::api_workers:
+  - "%{::processorcount}"
+neutron::server::router_scheduler_driver:
+  - "neutron.scheduler.l3_agent_scheduler.LeastRoutersScheduler"

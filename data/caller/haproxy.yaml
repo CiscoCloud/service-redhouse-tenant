@@ -1,0 +1,24 @@
+---
+# haproxy
+haproxy::global_options:
+  log: "%{::ipaddress} local0"
+  chroot: '/var/lib/haproxy'
+  pidfile: '/var/run/haproxy.pid'
+  maxconn: '65000'
+  ulimit-n: '130095'
+  nbproc: '2'
+  spread-checks: '3'
+  user: 'haproxy'
+  group: 'haproxy'
+  daemon: ''
+  stats: 'socket /var/lib/haproxy/stats level admin'
+  tune.bufsize: '32768'
+
+# haproxy::listen
+haproxy::listen::collect_exported: false
+
+# haproxy::backend
+haproxy::backend::collect_exported: false
+
+# haproxy::frontend
+haproxy::frontend::collect_exported: false

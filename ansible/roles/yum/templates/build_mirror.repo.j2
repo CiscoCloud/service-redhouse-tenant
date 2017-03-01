@@ -1,0 +1,28 @@
+[{{ site_repo }}]
+metadata_expire = 86400
+baseurl = http://{{ server }}/{{ package_server_rhel_path }}/{{ site_repo }}
+ui_repoid_vars = releasever basearch
+name = CCS Repo {{ site_repo }}
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+enabled = 1
+gpgcheck = 0
+{% for repo in repos_signed %}
+[{{ repo }}]
+metadata_expire = 86400
+baseurl = http://{{ server }}/{{ package_server_rhel_path }}/{{ repo }}/
+ui_repoid_vars = releasever basearch
+name = CCS Repo {{ repo }}
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+enabled = 1
+gpgcheck = 1
+{% endfor %}
+{% for repo in repos_unsigned %}
+[{{ repo }}]
+metadata_expire = 86400
+baseurl = http://{{ server }}/{{ package_server_rhel_path }}/{{ repo }}/
+ui_repoid_vars = releasever basearch
+name = CCS Repo {{ repo }}
+gpgkey = file:///etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+enabled = 1
+gpgcheck = 0
+{% endfor %}

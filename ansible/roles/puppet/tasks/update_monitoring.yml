@@ -1,0 +1,14 @@
+---
+- stat: path="{{ osp_rel_mon }}"
+  register: osp_mon_file
+
+- stat: path="/var/log/yum.log"
+  register: yum_log_file
+
+- shell: "fgrep service-redhouse-tenant /var/log/yum.log | tail -n1 | awk -F: '{print $5}'"
+  when: yum_log_file.stat.exists and osp_mon_file.stat.exists
+  register: srt_version
+  changed_when: False
+
+- shell: sed -i "s/^openstack_release=.*/openstack_release={{ srt_version.stdout }}/g" {{ osp_rel_mon }}
+  when: osp_mon_file.stat.exists and srt_version.stdout.find("service-redhouse-tenant")|int == 0

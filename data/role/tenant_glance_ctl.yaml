@@ -1,0 +1,6 @@
+---
+classes:
+  - ccs::base
+  - ccs::glance_api
+  - ccs::gleek
+  - ccs::repose

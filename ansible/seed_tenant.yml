@@ -1,0 +1,224 @@
+---
+- hosts: "*keystonectl-001"
+  tasks:
+
+  - name: "Capture hardware information."
+    local_action: "command dmidecode"
+    register: dmidecode_out
+
+  - name: "Set BOM3.x if applicable"
+    set_fact:
+      bom_version: BOM3
+    when: "dmidecode_out.stdout | search('Product Name.*M3') or dmidecode_out.stdout | search('Product Name: VirtualBox')"
+
+  - name: "Set BOM4.x if applicable"
+    set_fact:
+      bom_version: BOM4
+    when: (dmidecode_out.stdout | search("Product Name.*M4"))
+
+  - debug: var=bom_version
+
+  - name: "Create keystone roles"
+    local_action: "command keystone role-create --name {{ item }}"
+    register: output_role_create
+    run_once: true
+    failed_when: "(output_role_create.rc != 0) and ('Conflict occurred attempting to store role' not in output_role_create.stderr)"
+    changed_when: output_role_create.rc == 0
+    with_items: "{{ keystone_roles }}"
+    tags:
+      - roles
+      - keystone
+
+  - name: "Create keystone tenants"
+    local_action: "command keystone tenant-create --name {{ item }}"
+    register: output_tenant_create
+    run_once: true
+    failed_when: "(output_tenant_create.rc != 0) and ('Duplicate entry' not in output_tenant_create.stderr)"
+    changed_when: output_tenant_create.rc == 0
+    with_items: "{{ keystone_tenants }}"
+    tags:
+      - tenants
+      - keystone
+
+  - name: "Add admin user to keystone tenants "
+    local_action: "command keystone user-role-add --user admin --role admin --tenant {{ item }}"
+    register: output_tenant_admin
+    run_once: true
+    failed_when: "(output_tenant_admin.rc != 0) and ('Conflict occurred attempting to store role grant.' not in output_tenant_admin.stderr)"
+    changed_when: output_tenant_admin.rc == 0
+    with_items: "{{ keystone_tenants }}"
+    tags:
+      - tenants
+      - keystone
+
+  - name: "Set nova quotas"
+    local_action: "command nova quota-update {{ lookup('pipe', './helpers/get_os_id.sh -t tenant -n ' + item[0].tenant) }} --{{item[1].key}} {{item[1].value}}"
+    register: output_tenant_quotas
+    run_once: true
+    changed_when: output_tenant_quotas.rc == 0
+    with_subelements:
+      - nova_quotas
+      - quotas
+    tags:
+      - tenants
+      - quotas
+      - keystone
+
+  - name: "Set neutron quotas"
+    local_action: "command neutron quota-update --tenant-id {{ lookup('pipe', './helpers/get_os_id.sh -t tenant -n ' + item[0].tenant) }} --{{item[1].key}} {{item[1].value}}"
+    register: output_tenant_quotas
+    run_once: true
+    changed_when: output_tenant_quotas.rc == 0
+    with_subelements:
+      - neutron_quotas
+      - quotas
+    tags:
+      - tenants
+      - quotas
+      - keystone
+
+  - name: "Create keystone users"
+    local_action: "command keystone user-create --name {{ item.name }} --tenant {{ item.tenants[0].name }}"
+    register: output_user
+    run_once: true
+    failed_when: "(output_user.rc != 0) and ('Conflict occurred attempting to store' not in output_user.stderr)"
+    changed_when: output_user.rc == 0
+    with_items:
+      - "{{ keystone_users }}"
+    tags:
+      - users
+      - keystone
+
+  - name: "Add keystone user tenants and roles"
+    local_action: "command keystone user-role-add --user {{ item[0].name }} --role {{ item[1].role }} --tenant {{ item[1].name }}"
+    register: output_user
+    run_once: true
+    failed_when: "(output_user.rc != 0) and ('Conflict occurred attempting to store' not in output_user.stderr)"
+    changed_when: output_user.rc == 0
+    with_subelements:
+      - keystone_users
+      - tenants
+    tags:
+      - users
+      - keystone
+
+  - name: "Create neutron networks"
+    local_action: "command neutron net-create {{ item.key }} --provider:network_type {{ item.value.provider_network_type }} --provider:physical_network {{ item.value.provider_physical_network }} --provider:segmentation_id {{ item.value.provider_segmentation_id }} --router:external {{ item.value.router_external }}"
+    register: output_network
+    run_once: true
+    failed_when: "(output_network.rc != 0) and ('Unable to create the network.' not in output_network.stderr)"
+    changed_when: output_network.rc == 0
+    with_dict: "{{ neutron_networks | default({}) }}"
+    tags:
+      - networks
+      - neutron
+
+  - name: "Create neutron subnets"
+    local_action: "command neutron subnet-create --name {{ item.key }} {{ item.value.net_name }}  {{ item.value.cidr }} --allocation-pool {{ item.value.pool }} --enable_dhcp {{ item.value.dhcp }}"
+    register: output_subnet
+    run_once: true
+    failed_when: "(output_subnet.rc != 0) and ('Requested subnet with cidr' not in output_subnet.stderr)"
+    changed_when: output_subnet.rc == 0
+    with_dict: "{{ neutron_subnets  | default({}) }}"
+    tags:
+      - subnets
+      - neutron
+
+  - name: "Create nova floating pool(s)"
+    local_action: "command echo nova floating-pool-create {{ item }}"
+    register: output_float_pool
+    run_once: true
+    with_items: "{{ nova_floating_pools | default([]) }}"
+    tags:
+      - floating-pool
+      - nova
+
+  - name: "Create nova aggregates"
+    local_action: "command nova aggregate-create {{ item.name }} {{ region }}"
+    register: output_agg_create
+    run_once: true
+    failed_when: "(output_agg_create.rc != 0) and ('There was a conflict when trying to complete your request' not in output_agg_create.stderr)"
+    changed_when: output_agg_create.rc == 0
+    with_items: "aggregates['{{ bom_version }}']"
+    tags:
+      - aggregates
+      - nova
+
+  - name: "Map hosts to aggregates"
+    local_action: "command nova aggregate-add-host {{ lookup('pipe', './helpers/get_os_id.sh -t aggregate -n ' + item[0].name) }} {{ item[1] }}"
+    register: output_agg_host
+    run_once: true
+    failed_when: "(output_agg_host.rc != 0) and ('already has host' not in output_agg_host.stderr)"
+    changed_when: output_agg_host.rc == 0
+    with_subelements:
+      - "{{ host_aggregates | default ({}) }}"
+      - hosts
+    tags:
+      - aggregates
+      - nova
+
+
+  - name: "Set nova aggregate metadata"
+    local_action: "command nova aggregate-set-metadata {{ item[0].name }} {{ item[1] }}"
+    register: output_agg_metadata
+    run_once: true
+    changed_when: output_agg_metadata.rc == 0
+    when: item[1] != ""
+    with_subelements:
+      - "aggregates['{{ bom_version }}']"
+      - metadata
+    tags:
+      - aggregates
+      - nova
+
+  - name: "Delete default nova flavors"
+    local_action: "command nova flavor-delete  {{ lookup('pipe', './helpers/get_os_id.sh -t flavor -n ' + item) }}"
+    register: output_delete_flavor
+    run_once: true
+    changed_when: output_delete_flavor.rc == 0
+    ignore_errors: true
+    with_items:
+      - "m1.tiny"
+      - "m1.small"
+      - "m1.medium"
+      - "m1.large"
+      - "m1.xlarge"
+    tags:
+      - flavors
+      - nova
+
+  - name: "Create nova flavors"
+    local_action: "command nova flavor-create --is-public {{ item.create_args.public }} {{ item.name }} {{ item.create_args.id }} {{ item.create_args.ram}} {{ item.create_args.disk }} {{ item.create_args.vcpus }} {{ item.create_args.extra_args | default('') }}"
+    register: output_create_flavor
+    run_once: true
+    failed_when: "(output_create_flavor.rc != 0) and ('ERROR: Flavor with name' not in output_create_flavor.stderr)"
+    changed_when: output_create_flavor.rc == 0
+    with_items:
+      - "{{ flavors[bom_version] }}"
+    tags:
+      - flavors
+      - nova
+
+  - name: "Map flavor to aggregate"
+    local_action: "command nova flavor-key {{ lookup('pipe', './helpers/get_os_id.sh -t flavor -n ' + item.name) }} set {{ item.aggregate_key }}"
+    register: output_map_flavor
+    run_once: true
+    changed_when: output_map_flavor.rc == 0
+    when: item.aggregate_key is defined
+    with_items:
+      - "{{ flavors[bom_version] }}"
+    tags:
+      - flavors
+      - nova
+
+  - name: "Delete admin association with flavor_admin role"
+    local_action: "command keystone user-role-remove --user admin --role flavor_admin --tenant admin"
+    tags:
+      - users
+      - keystone
+
+  - name: "Delete  keystone flavor_admin role"
+    local_action: "command keystone role-delete flavor_admin"
+    tags:
+      - users
+      - keystone
